@@ -1,0 +1,58 @@
+# ERD – MongoDB (NoSQL)
+## Sistema de Gerenciamento de Acervos de Livros
+
+```mermaid
+erDiagram
+
+    USUARIOS {
+        ObjectId _id
+        String nome
+        String email
+        String senha_hash
+    }
+
+    ACERVOS {
+        ObjectId _id
+        String nome
+        String descricao
+        String visibilidade
+        ObjectId proprietario_id
+        Array membros
+    }
+
+    OBRAS {
+        ObjectId _id
+        ObjectId acervo_id
+        String titulo
+        Array autores
+        Array generos
+        Array exemplares
+    }
+
+    EXEMPLARES {
+        ObjectId _id
+        String codigo
+        String isbn
+        String editora
+        String edicao
+        String status
+    }
+
+    EMPRESTIMOS {
+        ObjectId _id
+        ObjectId acervo_id
+        ObjectId obra_id
+        ObjectId exemplar_id
+        ObjectId usuario_id
+        Object snapshot
+        Date data_emprestimo
+        Date data_devolucao
+        String status
+    }
+
+    USUARIOS ||--o{ ACERVOS : "possui / administra"
+    ACERVOS ||--o{ OBRAS : "contém"
+    ACERVOS ||--o{ EMPRESTIMOS : "registra"
+    OBRAS ||--o{ EXEMPLARES : "possui"
+    OBRAS ||--o{ EMPRESTIMOS : "é emprestada em"
+    USUARIOS ||--o{ EMPRESTIMOS : "realiza"

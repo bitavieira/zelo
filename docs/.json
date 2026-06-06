@@ -1,0 +1,112 @@
+db.obras.insertMany([
+  {
+    _id: obraDomCasmurroId,
+    acervo_id: acervoLiteraturaId,
+    titulo: "Dom Casmurro",
+    autores: ["Machado de Assis"],
+    generos: ["Romance", "Literatura Brasileira", "Clássico"],
+    exemplares: [
+      {
+        _id: exemplarDomCasmurro1Id,
+        codigo: "DC-EX1",
+        isbn: "9788535910663",
+        editora: "Companhia das Letras",
+        edicao: "Edição de bolso",
+        status: "emprestado"
+      },
+      {
+        _id: exemplarDomCasmurro2Id,
+        codigo: "DC-EX2",
+        isbn: "9788535910663",
+        editora: "Companhia das Letras",
+        edicao: "Edição de bolso",
+        status: "disponivel"
+      }
+    ]
+  },
+  {
+    _id: obraPequenoPrincipeId,
+    acervo_id: acervoFantasiaId,
+    titulo: "O Pequeno Príncipe",
+    autores: ["Antoine de Saint-Exupéry"],
+    generos: ["Fábula", "Infantojuvenil", "Clássico"],
+    exemplares: [
+      {
+        _id: exemplarPequenoPrincipe1Id,
+        codigo: "OPP-EX1",
+        isbn: "9788595081512",
+        editora: "HarperCollins Brasil",
+        edicao: "Edição capa comum",
+        status: "disponivel"
+      }
+    ]
+  },
+  {
+    _id: obraHarryPotterId,
+    acervo_id: acervoFantasiaId,
+    titulo: "Harry Potter e a Pedra Filosofal",
+    autores: ["J. K. Rowling"],
+    generos: ["Fantasia", "Aventura", "Infantojuvenil"],
+    exemplares: [
+      {
+        _id: exemplarHarryPotter1Id,
+        codigo: "HP-EX1",
+        isbn: "9788532530783",
+        editora: "Rocco",
+        edicao: "Edição brasileira",
+        status: "emprestado"
+      }
+    ]
+  },
+  {
+    _id: obra1984Id,
+    acervo_id: acervoLiteraturaId,
+    titulo: "1984",
+    autores: ["George Orwell"],
+    generos: ["Distopia", "Ficção Política", "Clássico"],
+    exemplares: [
+      {
+        _id: exemplar1984_1Id,
+        codigo: "1984-EX1",
+        isbn: "9788535914849",
+        editora: "Companhia das Letras",
+        edicao: "Edição brasileira",
+        status: "disponivel"
+      }
+    ]
+  },
+  {
+    _id: obraRevolucaoBichosId,
+    acervo_id: acervoLiteraturaId,
+    titulo: "A Revolução dos Bichos",
+    autores: ["George Orwell"],
+    generos: ["Sátira Política", "Fábula", "Clássico"],
+    exemplares: [
+      {
+        _id: exemplarRevolucaoBichos1Id,
+        codigo: "ARB-EX1",
+        isbn: "9788535909555",
+        editora: "Companhia das Letras",
+        edicao: "Edição brasileira",
+        status: "disponivel"
+      }
+    ]
+  },
+  {
+    _id: obraCapitaesAreiaId,
+    acervo_id: acervoLiteraturaId,
+    titulo: "Capitães da Areia",
+    autores: ["Jorge Amado"],
+    generos: ["Romance", "Literatura Brasileira", "Realismo Social"],
+    exemplares: [
+      {
+        _id: exemplarCapitaesAreia1Id,
+        codigo: "CA-EX1",
+        isbn: "9788535911691",
+        editora: "Companhia das Letras",
+        edicao: "Edição brasileira",
+        status: "disponivel"
+      }
+    ]
+  }
+]);
