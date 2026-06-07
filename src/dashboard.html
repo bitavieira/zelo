@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Zelo — Dashboard</title>
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"/>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet"/>
+
+  <style>
+    :root {
+      --verde:      #2DBE6C;
+      --verde-esc:  #1e9e56;
+      --verde-pale: #e8f8ef;
+      --azul-esc:   #0d1f40;
+      --azul-med:   #1a3a6b;
+      --cinza-bg:   #f0f3f7;
+      --cinza-card: #ffffff;
+      --cinza-in:   #e8ecf2;
+      --sidebar-w:  260px;
+      --topbar-h:   68px;
+      --amarelo:    #ffb703;
+      --vermelho:   #e63946;
+      --roxo:       #7b5ea7;
+    }
+    * { font-family: 'Nunito', sans-serif; box-sizing: border-box; }
+    body { background: var(--cinza-bg); margin: 0; overflow-x: hidden; }
+
+    /* SIDEBAR */
+    .sidebar {
+      position: fixed; top: 0; left: 0;
+      width: var(--sidebar-w); height: 100vh;
+      background: var(--azul-esc);
+      display: flex; flex-direction: column;
+      z-index: 200; transition: transform .3s ease;
+    }
+    .sidebar-logo {
+      display: flex; align-items: center; gap: .7rem;
+      padding: 1.4rem 1.6rem 1rem;
+      border-bottom: 1px solid rgba(255,255,255,.08);
+      text-decoration: none;
+    }
+    .sidebar-logo span { font-size: 1.6rem; font-weight: 900; color: #fff; letter-spacing: -1px; }
+    .nav-section {
+      padding: 1rem .8rem .3rem;
+      font-size: .7rem; font-weight: 800;
+      color: rgba(255,255,255,.35);
+      letter-spacing: 1.2px; text-transform: uppercase;
+    }
+    .nav-item-link {
+      display: flex; align-items: center; gap: .75rem;
+      padding: .65rem 1rem; margin: .15rem .6rem;
+      border-radius: 12px; color: rgba(255,255,255,.65);
+      text-decoration: none; font-size: .93rem; font-weight: 700;
+      transition: all .18s; cursor: pointer;
+      border: none; background: transparent;
+      width: calc(100% - 1.2rem); text-align: left;
+    }
+    .nav-item-link i { font-size: 1.05rem; min-width: 20px; }
+    .nav-item-link:hover { background: rgba(255,255,255,.08); color: #fff; }
+    .nav-item-link.active { background: var(--verde); color: #fff; box-shadow: 0 4px 14px rgba(45,190,108,.35); }
+    .nav-item-link .badge-nav {
+      margin-left: auto; background: var(--amarelo);
+      color: var(--azul-esc); font-size: .68rem; font-weight: 800;
+      border-radius: 20px; padding: .15rem .5rem;
+    }
+    .sidebar-footer {
+      margin-top: auto; padding: 1rem .8rem 1.4rem;
+      border-top: 1px solid rgba(255,255,255,.08);
+    }
+
+    /* TOPBAR */
+    .topbar {
+      position: fixed; top: 0; left: var(--sidebar-w); right: 0;
+      height: var(--topbar-h); background: #fff;
+      border-bottom: 1px solid var(--cinza-in);
+      display: flex; align-items: center; padding: 0 1.8rem; gap: 1rem; z-index: 100;
+    }
+    .topbar-search { flex: 1; max-width: 420px; position: relative; }
+    .topbar-search input {
+      width: 100%; background: var(--cinza-in);
+      border: 2px solid transparent; border-radius: 50px;
+      padding: .5rem 1rem .5rem 2.6rem;
+      font-size: .9rem; font-weight: 600; color: var(--azul-esc);
+      transition: border-color .2s; font-family: 'Nunito', sans-serif;
+    }
+    .topbar-search input:focus { outline: none; border-color: var(--verde); background: #fff; }
+    .topbar-search i { position: absolute; left: .9rem; top: 50%; transform: translateY(-50%); color: #9aaabf; font-size: 1rem; }
+    .topbar-right { margin-left: auto; display: flex; align-items: center; gap: .6rem; }
+    .btn-icon {
+      width: 40px; height: 40px; border-radius: 50%; border: none;
+      background: var(--cinza-in); color: var(--azul-esc); font-size: 1.05rem;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; position: relative; transition: background .2s;
+    }
+    .btn-icon:hover { background: var(--verde-pale); color: var(--verde-esc); }
+    .btn-icon .notif-dot {
+      position: absolute; top: 5px; right: 5px;
+      width: 9px; height: 9px; background: var(--amarelo);
+      border-radius: 50%; border: 2px solid #fff;
+    }
+    .avatar-btn {
+      width: 40px; height: 40px; border-radius: 50%;
+      background: linear-gradient(135deg, var(--verde) 0%, var(--azul-med) 100%);
+      color: #fff; font-weight: 800; font-size: .9rem; border: none; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+    }
+
+    /* CONTEÚDO */
+    .main-content { margin-left: var(--sidebar-w); margin-top: var(--topbar-h); padding: 2rem 2rem 3rem; }
+    .page-title { font-size: 1.5rem; font-weight: 900; color: var(--azul-esc); margin-bottom: .2rem; }
+    .page-sub { font-size: .88rem; font-weight: 600; color: #6b7a90; margin-bottom: 1.8rem; }
+
+    /* STAT CARDS */
+    .stat-card {
+      background: var(--cinza-card); border-radius: 20px; padding: 1.4rem 1.5rem;
+      border: none; box-shadow: 0 2px 12px rgba(13,31,64,.06);
+      display: flex; align-items: center; gap: 1rem;
+      transition: transform .2s, box-shadow .2s;
+    }
+    .stat-card:hover { transform: translateY(-3px); box-shadow: 0 8px 24px rgba(13,31,64,.1); }
+    .stat-icon {
+      width: 52px; height: 52px; border-radius: 14px;
+      display: flex; align-items: center; justify-content: center; font-size: 1.4rem; flex-shrink: 0;
+    }
+    .stat-num { font-size: 1.8rem; font-weight: 900; color: var(--azul-esc); line-height: 1; }
+    .stat-label { font-size: .8rem; font-weight: 700; color: #6b7a90; margin-top: .15rem; }
+    .stat-delta { font-size: .75rem; font-weight: 800; margin-top: .3rem; }
+    .delta-up { color: var(--verde); }
+    .delta-down { color: var(--vermelho); }
+
+    /* SEÇÕES */
+    .section-card { background: var(--cinza-card); border-radius: 20px; padding: 1.5rem; box-shadow: 0 2px 12px rgba(13,31,64,.06); }
+    .section-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.2rem; }
+    .section-header h6 { font-size: 1rem; font-weight: 900; color: var(--azul-esc); margin: 0; }
+    .btn-ver-tudo { font-size: .8rem; font-weight: 800; color: var(--verde-esc); text-decoration: none; border: none; background: transparent; cursor: pointer; }
+    .btn-ver-tudo:hover { text-decoration: underline; }
+
+    /* LIVROS */
+    .book-card {
+      background: var(--cinza-card); border-radius: 16px; overflow: hidden;
+      box-shadow: 0 2px 10px rgba(13,31,64,.07); transition: transform .2s, box-shadow .2s;
+      cursor: pointer; border: 2px solid transparent;
+    }
+    .book-card:hover { transform: translateY(-4px); box-shadow: 0 10px 28px rgba(13,31,64,.13); border-color: var(--verde); }
+    .book-cover {
+      width: 100%; height: 160px; object-fit: cover;
+      background: var(--cinza-in); display: flex; align-items: center; justify-content: center;
+      font-size: 2.5rem; color: #c0ccd8;
+    }
+    .book-info { padding: .9rem; }
+    .book-title { font-size: .88rem; font-weight: 800; color: var(--azul-esc); margin-bottom: .15rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .book-author { font-size: .78rem; font-weight: 600; color: #6b7a90; margin-bottom: .5rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .badge-status { display: inline-flex; align-items: center; gap: .3rem; font-size: .72rem; font-weight: 800; border-radius: 20px; padding: .2rem .65rem; }
+    .badge-disponivel { background: var(--verde-pale); color: var(--verde-esc); }
+    .badge-emprestado { background: #fff3cd; color: #a07800; }
+    .badge-atrasado   { background: #fde8e8; color: var(--vermelho); }
+
+    /* TABELA */
+    .tabela-wrap { overflow-x: auto; }
+    .emprestimo-table { width: 100%; border-collapse: separate; border-spacing: 0 .4rem; }
+    .emprestimo-table thead th {
+      font-size: .75rem; font-weight: 800; color: #9aaabf;
+      text-transform: uppercase; letter-spacing: .6px; padding: .4rem 1rem; border: none; white-space: nowrap;
+    }
+    .emprestimo-table tbody tr { background: var(--cinza-bg); transition: background .15s; }
+    .emprestimo-table tbody tr:hover { background: var(--verde-pale); }
+    .emprestimo-table tbody td { padding: .75rem 1rem; font-size: .85rem; font-weight: 700; color: var(--azul-esc); vertical-align: middle; border: none; }
+    .emprestimo-table tbody td:first-child { border-radius: 12px 0 0 12px; }
+    .emprestimo-table tbody td:last-child  { border-radius: 0 12px 12px 0; }
+    .emp-livro-info { display: flex; align-items: center; gap: .7rem; }
+    .emp-livro-capa {
+      width: 36px; height: 48px; border-radius: 5px; background: var(--cinza-in);
+      flex-shrink: 0; display: flex; align-items: center; justify-content: center;
+      font-size: 1.1rem; color: #c0ccd8;
+    }
+    .user-chip { display: inline-flex; align-items: center; gap: .4rem; }
+    .user-avatar-sm {
+      width: 28px; height: 28px; border-radius: 50%;
+      background: linear-gradient(135deg, var(--verde) 0%, var(--azul-med) 100%);
+      color: #fff; font-size: .65rem; font-weight: 800;
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    }
+
+    /* BOTÕES */
+    .btn-main {
+      background: var(--verde); color: #fff; font-weight: 800; font-size: .9rem;
+      border: none; border-radius: 50px; padding: .55rem 1.4rem; cursor: pointer;
+      transition: background .2s; display: inline-flex; align-items: center; gap: .4rem; text-decoration: none;
+    }
+    .btn-main:hover { background: var(--verde-esc); color: #fff; }
+    .btn-outline {
+      background: transparent; color: var(--azul-esc); font-weight: 800; font-size: .9rem;
+      border: 2px solid var(--cinza-in); border-radius: 50px; padding: .5rem 1.3rem; cursor: pointer;
+      transition: all .2s; display: inline-flex; align-items: center; gap: .4rem; text-decoration: none;
+    }
+    .btn-outline:hover { border-color: var(--verde); color: var(--verde-esc); }
+
+    /* PAGES */
+    .page-view { display: none; }
+    .page-view.active { display: block; animation: fadeIn .25s ease; }
+    @keyframes fadeIn { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
+
+    /* NOTIFICAÇÕES */
+    .notif-panel {
+      position: absolute; top: calc(var(--topbar-h) + .3rem); right: 4.5rem;
+      width: 320px; background: #fff; border-radius: 18px;
+      box-shadow: 0 12px 40px rgba(13,31,64,.18); z-index: 300; display: none; overflow: hidden;
+    }
+    .notif-panel.open { display: block; animation: fadeIn .2s ease; }
+    .notif-header {
+      padding: 1rem 1.2rem .7rem; font-weight: 900; font-size: .95rem; color: var(--azul-esc);
+      border-bottom: 1px solid var(--cinza-in); display: flex; justify-content: space-between; align-items: center;
+    }
+    .notif-item { display: flex; gap: .8rem; padding: .85rem 1.2rem; border-bottom: 1px solid var(--cinza-in); cursor: pointer; }
+    .notif-item:hover { background: var(--cinza-bg); }
+    .notif-item:last-child { border-bottom: none; }
+    .notif-dot-item { width: 10px; height: 10px; border-radius: 50%; background: var(--verde); margin-top: .3rem; flex-shrink: 0; }
+    .notif-txt { font-size: .83rem; font-weight: 700; color: var(--azul-esc); }
+    .notif-time { font-size: .75rem; font-weight: 600; color: #9aaabf; margin-top: .1rem; }
+
+    /* PERFIL DROPDOWN */
+    .profile-panel {
+      position: absolute; top: calc(var(--topbar-h) + .3rem); right: .8rem;
+      width: 220px; background: #fff; border-radius: 18px;
+      box-shadow: 0 12px 40px rgba(13,31,64,.18); z-index: 300; display: none; overflow: hidden;
+    }
+    .profile-panel.open { display: block; animation: fadeIn .2s ease; }
+    .profile-top { padding: 1.1rem 1.2rem .8rem; border-bottom: 1px solid var(--cinza-in); text-align: center; }
+    .profile-avatar {
+      width: 54px; height: 54px; border-radius: 50%;
+      background: linear-gradient(135deg, var(--verde) 0%, var(--azul-med) 100%);
+      color: #fff; font-size: 1.2rem; font-weight: 800;
+      display: flex; align-items: center; justify-content: center; margin: 0 auto .5rem;
+    }
+    .profile-nome { font-weight: 900; font-size: .9rem; color: var(--azul-esc); }
+    .profile-email { font-size: .75rem; font-weight: 600; color: #6b7a90; }
+    .profile-menu-item {
+      display: flex; align-items: center; gap: .7rem; padding: .7rem 1.2rem;
+      font-size: .85rem; font-weight: 700; color: var(--azul-esc); cursor: pointer;
+      transition: background .15s; text-decoration: none; border: none; background: transparent;
+      width: 100%; text-align: left;
+    }
+    .profile-menu-item:hover { background: var(--cinza-bg); color: var(--azul-esc); }
+    .profile-menu-item.danger { color: var(--vermelho); }
+    .profile-menu-item.danger:hover { background: #fde8e8; }
+
+    /* MODAL */
+    .modal-header { border-bottom: 1px solid var(--cinza-in); }
+    .modal-title { font-weight: 900; color: var(--azul-esc); }
+    .modal-footer { border-top: 1px solid var(--cinza-in); }
+    .form-label { font-weight: 800; font-size: .83rem; color: var(--azul-esc); }
+    .form-control, .form-select {
+      background: var(--cinza-in); border: 2px solid transparent;
+      border-radius: 12px; font-family: 'Nunito', sans-serif; font-weight: 600; color: var(--azul-esc);
+    }
+    .form-control:focus, .form-select:focus { border-color: var(--verde); background: #fff; box-shadow: 0 0 0 3px rgba(45,190,108,.12); }
+
+    /* OVERLAY MOBILE */
+    .sidebar-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.45); z-index: 199; }
+
+    @media (max-width: 768px) {
+      .sidebar { transform: translateX(-100%); }
+      .sidebar.open { transform: translateX(0); }
+      .sidebar-overlay.open { display: block; }
+      .topbar { left: 0; }
+      .main-content { margin-left: 0; padding: 1.2rem 1rem 3rem; }
+      .btn-mob-menu { display: flex !important; width: 38px; height: 38px; border-radius: 10px; border: none; background: var(--cinza-in); color: var(--azul-esc); font-size: 1.1rem; align-items: center; justify-content: center; cursor: pointer; margin-right: .3rem; }
+    }
+    @media (min-width: 769px) { .btn-mob-menu { display: none !important; } }
+  </style>
+</head>
+<body>
+
+<div class="sidebar-overlay" id="overlay" onclick="fecharSidebar()"></div>
+
+<!-- SIDEBAR -->
+<aside class="sidebar" id="sidebar">
+  <a class="sidebar-logo" href="index.html">
+    <svg width="34" height="34" viewBox="0 0 80 80" fill="none">
+      <rect x="8" y="52" width="64" height="5" rx="2.5" fill="white"/>
+      <rect x="14" y="28" width="10" height="24" rx="2" fill="#90b4f5"/>
+      <rect x="26" y="22" width="10" height="30" rx="2" fill="#2DBE6C"/>
+      <rect x="38" y="30" width="8"  height="22" rx="2" fill="white"/>
+      <rect x="48" y="26" width="10" height="26" rx="2" fill="#2DBE6C" opacity=".7"/>
+      <path d="M22 64 Q40 74 58 64" stroke="#2DBE6C" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+      <circle cx="22" cy="64" r="3" fill="#2DBE6C"/><circle cx="58" cy="64" r="3" fill="#2DBE6C"/>
+    </svg>
+    <span>zelo</span>
+  </a>
+
+  <div class="nav-section">Menu</div>
+  <button class="nav-item-link active" onclick="irPara('inicio', this)"><i class="bi bi-house-fill"></i> Início</button>
+  <button class="nav-item-link" onclick="irPara('acervos', this)"><i class="bi bi-collection-fill"></i> Meus acervos</button>
+  <button class="nav-item-link" onclick="irPara('emprestimos', this)"><i class="bi bi-arrow-left-right"></i> Empréstimos<span class="badge-nav">3</span></button>
+
+  <div class="nav-section">Conta</div>
+  <button class="nav-item-link" onclick="irPara('perfil', this)"><i class="bi bi-person-fill"></i> Perfil</button>
+  <button class="nav-item-link" onclick="irPara('config', this)"><i class="bi bi-gear-fill"></i> Configurações</button>
+
+  <div class="sidebar-footer">
+    <a href="login.html" class="nav-item-link" style="color:rgba(255,255,255,.5);"><i class="bi bi-box-arrow-left"></i> Sair</a>
+  </div>
+</aside>
+
+<!-- TOPBAR -->
+<header class="topbar">
+  <button class="btn-mob-menu" onclick="abrirSidebar()"><i class="bi bi-list"></i></button>
+  <div class="topbar-search">
+    <i class="bi bi-search"></i>
+    <input type="text" placeholder="Buscar acervos, livros, autores…" oninput="buscarLivros(this.value)"/>
+  </div>
+  <div class="topbar-right">
+    <button class="btn-icon" onclick="toggleNotif()"><i class="bi bi-bell-fill"></i><span class="notif-dot"></span></button>
+    <button class="avatar-btn" onclick="togglePerfil()">MB</button>
+  </div>
+</header>
+
+<!-- Painel notificações -->
+<div class="notif-panel" id="notifPanel">
+  <div class="notif-header">
+    Notificações
+    <button onclick="marcarTodasLidas()" style="font-size:.75rem;font-weight:700;color:var(--verde);border:none;background:transparent;cursor:pointer;">Marcar todas lidas</button>
+  </div>
+  <div class="notif-item"><div class="notif-dot-item"></div><div><div class="notif-txt">⚠️ <strong>O Hobbit</strong> está com devolução atrasada — João Silva</div><div class="notif-time">Há 2 horas</div></div></div>
+  <div class="notif-item"><div class="notif-dot-item"></div><div><div class="notif-txt">📖 <strong>Maria Bárbara</strong> devolveu "Dom Casmurro"</div><div class="notif-time">Há 5 horas</div></div></div>
+  <div class="notif-item"><div class="notif-dot-item" style="background:var(--amarelo)"></div><div><div class="notif-txt">📅 <strong>"1984"</strong> vence amanhã — Ana Clara</div><div class="notif-time">Ontem</div></div></div>
+  <div class="notif-item" style="border:none;"><div class="notif-dot-item" style="background:var(--cinza-in)"></div><div><div class="notif-txt" style="color:#9aaabf;">Novo membro entrou no seu grupo de leitura</div><div class="notif-time">2 dias atrás</div></div></div>
+</div>
+
+<!-- Painel perfil -->
+<div class="profile-panel" id="profilePanel">
+  <div class="profile-top">
+    <div class="profile-avatar">MB</div>
+    <div class="profile-nome">Maria Bárbara</div>
+    <div class="profile-email">maria@email.com</div>
+  </div>
+  <button class="profile-menu-item" onclick="irPara('perfil', null); togglePerfil()"><i class="bi bi-person"></i> Meu perfil</button>
+  <button class="profile-menu-item" onclick="irPara('config', null); togglePerfil()"><i class="bi bi-gear"></i> Configurações</button>
+  <div style="border-top:1px solid var(--cinza-in);">
+    <a href="login.html" class="profile-menu-item danger"><i class="bi bi-box-arrow-left"></i> Sair</a>
+  </div>
+</div>
+
+<!-- CONTEÚDO PRINCIPAL -->
+<main class="main-content">
+
+  <!-- INÍCIO -->
+  <div id="view-inicio" class="page-view active">
+    <div class="d-flex justify-content-between align-items-start flex-wrap gap-2 mb-1">
+      <div><p class="page-title">Olá, Maria Bárbara! 👋</p><p class="page-sub">Aqui está um resumo do seu acervo hoje.</p></div>
+      <button class="btn-main" data-bs-toggle="modal" data-bs-target="#modalEmprestimo"><i class="bi bi-plus-lg"></i> Novo empréstimo</button>
+    </div>
+
+    <div class="row g-3 mb-4">
+      <div class="col-6 col-lg-3"><div class="stat-card"><div class="stat-icon" style="background:#e8f8ef;"><i class="bi bi-book-fill" style="color:var(--verde-esc);"></i></div><div><div class="stat-num">312</div><div class="stat-label">Livros no acervo</div><div class="stat-delta delta-up"><i class="bi bi-arrow-up-short"></i> +8 este mês</div></div></div></div>
+      <div class="col-6 col-lg-3"><div class="stat-card"><div class="stat-icon" style="background:#fff3cd;"><i class="bi bi-arrow-right-circle-fill" style="color:#a07800;"></i></div><div><div class="stat-num">14</div><div class="stat-label">Empréstimos ativos</div><div class="stat-delta delta-up"><i class="bi bi-arrow-up-short"></i> +2 esta semana</div></div></div></div>
+      <div class="col-6 col-lg-3"><div class="stat-card"><div class="stat-icon" style="background:#fde8e8;"><i class="bi bi-exclamation-circle-fill" style="color:var(--vermelho);"></i></div><div><div class="stat-num">3</div><div class="stat-label">Atrasados</div><div class="stat-delta delta-down"><i class="bi bi-arrow-up-short"></i> +1 hoje</div></div></div></div>
+      <div class="col-6 col-lg-3"><div class="stat-card"><div class="stat-icon" style="background:#ede9f6;"><i class="bi bi-people-fill" style="color:var(--roxo);"></i></div><div><div class="stat-num">28</div><div class="stat-label">Leitores únicos</div><div class="stat-delta delta-up"><i class="bi bi-arrow-up-short"></i> +3 este mês</div></div></div></div>
+    </div>
+
+    <div class="row g-3">
+      <div class="col-lg-7">
+        <div class="section-card h-100">
+          <div class="section-header"><h6><i class="bi bi-clock-history me-2" style="color:var(--verde);"></i>Empréstimos recentes</h6><button class="btn-ver-tudo" onclick="irPara('emprestimos', null)">Ver todos →</button></div>
+          <div class="tabela-wrap">
+            <table class="emprestimo-table">
+              <thead><tr><th>Livro</th><th>Leitor</th><th>Devolução</th><th>Status</th></tr></thead>
+              <tbody>
+                <tr>
+                  <td><div class="emp-livro-info"><div class="emp-livro-capa"><i class="bi bi-book"></i></div><div><div style="font-size:.82rem;font-weight:800;">Eng. de Software Moderna</div><div style="font-size:.72rem;color:#6b7a90;font-weight:600;">Marco Tulio Valente</div></div></div></td>
+                  <td><div class="user-chip"><div class="user-avatar-sm">MB</div><span style="font-size:.82rem;">@Maria</span></div></td>
+                  <td><span style="font-size:.82rem;">01/05/2026</span></td>
+                  <td><span class="badge-status badge-disponivel"><i class="bi bi-circle-fill" style="font-size:.4rem;"></i> Em dia</span></td>
+                </tr>
+                <tr>
+                  <td><div class="emp-livro-info"><div class="emp-livro-capa"><i class="bi bi-book"></i></div><div><div style="font-size:.82rem;font-weight:800;">O Hobbit</div><div style="font-size:.72rem;color:#6b7a90;font-weight:600;">J.R.R. Tolkien</div></div></div></td>
+                  <td><div class="user-chip"><div class="user-avatar-sm" style="background:linear-gradient(135deg,#e63946,#7b5ea7);">JS</div><span style="font-size:.82rem;">@João</span></div></td>
+                  <td><span style="font-size:.82rem;color:var(--vermelho);">15/04/2026</span></td>
+                  <td><span class="badge-status badge-atrasado"><i class="bi bi-circle-fill" style="font-size:.4rem;"></i> Atrasado</span></td>
+                </tr>
+                <tr>
+                  <td><div class="emp-livro-info"><div class="emp-livro-capa"><i class="bi bi-book"></i></div><div><div style="font-size:.82rem;font-weight:800;">1984</div><div style="font-size:.72rem;color:#6b7a90;font-weight:600;">George Orwell</div></div></div></td>
+                  <td><div class="user-chip"><div class="user-avatar-sm" style="background:linear-gradient(135deg,var(--amarelo),#fd7e14);">AC</div><span style="font-size:.82rem;">@AnaClaraa</span></div></td>
+                  <td><span style="font-size:.82rem;">23/05/2026</span></td>
+                  <td><span class="badge-status badge-emprestado"><i class="bi bi-circle-fill" style="font-size:.4rem;"></i> Emprestado</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-lg-5">
+        <div class="section-card h-100">
+          <div class="section-header"><h6><i class="bi bi-lightning-fill me-2" style="color:var(--amarelo);"></i>Ações rápidas</h6></div>
+          <div class="d-flex flex-column gap-2">
+            <button class="btn-outline w-100 justify-content-start" data-bs-toggle="modal" data-bs-target="#modalEmprestimo"><i class="bi bi-plus-circle" style="color:var(--verde);"></i> Registrar empréstimo</button>
+            <button class="btn-outline w-100 justify-content-start" onclick="irPara('acervos', null)"><i class="bi bi-collection" style="color:var(--azul-med);"></i> Adicionar livro ao acervo</button>
+            <button class="btn-outline w-100 justify-content-start" onclick="irPara('emprestimos', null)"><i class="bi bi-check2-circle" style="color:var(--verde-esc);"></i> Registrar devolução</button>
+            <button class="btn-outline w-100 justify-content-start" onclick="irPara('emprestimos', null)"><i class="bi bi-exclamation-triangle" style="color:var(--vermelho);"></i> Ver atrasados (3)</button>
+          </div>
+          <div style="background:var(--cinza-bg);border-radius:14px;padding:1rem;margin-top:1.2rem;">
+            <p style="font-size:.78rem;font-weight:800;color:#9aaabf;margin-bottom:.7rem;text-transform:uppercase;letter-spacing:.8px;">Acervo por status</p>
+            <div class="mb-2"><div class="d-flex justify-content-between mb-1" style="font-size:.8rem;font-weight:700;"><span>Disponíveis</span><span style="color:var(--verde);">298</span></div><div style="height:7px;background:var(--cinza-in);border-radius:4px;"><div style="height:100%;width:95%;background:var(--verde);border-radius:4px;"></div></div></div>
+            <div class="mb-2"><div class="d-flex justify-content-between mb-1" style="font-size:.8rem;font-weight:700;"><span>Emprestados</span><span style="color:var(--amarelo);">11</span></div><div style="height:7px;background:var(--cinza-in);border-radius:4px;"><div style="height:100%;width:4%;background:var(--amarelo);border-radius:4px;"></div></div></div>
+            <div><div class="d-flex justify-content-between mb-1" style="font-size:.8rem;font-weight:700;"><span>Atrasados</span><span style="color:var(--vermelho);">3</span></div><div style="height:7px;background:var(--cinza-in);border-radius:4px;"><div style="height:100%;width:1%;background:var(--vermelho);border-radius:4px;"></div></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ACERVOS -->
+  <div id="view-acervos" class="page-view">
+    <div class="d-flex justify-content-between align-items-start flex-wrap gap-2 mb-4">
+      <div><p class="page-title">Meus Acervos</p><p class="page-sub">Gerencie sua coleção de livros.</p></div>
+      <div class="d-flex gap-2">
+        <a href="criar-acervo.html" class="btn-main"><i class="bi bi-plus-lg"></i> Criar acervo</a>
+        <button class="btn-outline" data-bs-toggle="modal" data-bs-target="#modalLivro"><i class="bi bi-book"></i> Adicionar livro</button>
+      </div>
+    </div>
+    <div class="d-flex gap-2 flex-wrap mb-3">
+      <button class="badge-status badge-disponivel" style="border:none;cursor:pointer;padding:.4rem .9rem;font-size:.82rem;" onclick="filtrarStatus('todos')">Todos (312)</button>
+      <button class="badge-status" style="background:var(--cinza-in);color:var(--azul-esc);border:none;cursor:pointer;padding:.4rem .9rem;font-size:.82rem;" onclick="filtrarStatus('disponivel')">Disponíveis (298)</button>
+      <button class="badge-status" style="background:var(--cinza-in);color:var(--azul-esc);border:none;cursor:pointer;padding:.4rem .9rem;font-size:.82rem;" onclick="filtrarStatus('emprestado')">Emprestados (11)</button>
+      <button class="badge-status" style="background:var(--cinza-in);color:var(--azul-esc);border:none;cursor:pointer;padding:.4rem .9rem;font-size:.82rem;" onclick="filtrarStatus('atrasado')">Atrasados (3)</button>
+    </div>
+    <div class="row g-3" id="grid-livros">
+      <div class="col-6 col-sm-4 col-md-3 col-xl-2 book-card-col" data-status="disponivel"><div class="book-card"><div class="book-cover"><i class="bi bi-book"></i></div><div class="book-info"><div class="book-title">Invencível</div><div class="book-author">Robert Kirkman</div><span class="badge-status badge-disponivel"><i class="bi bi-circle-fill" style="font-size:.4rem;"></i> Disponível</span></div></div></div>
+      <div class="col-6 col-sm-4 col-md-3 col-xl-2 book-card-col" data-status="emprestado"><div class="book-card"><div class="book-cover"><i class="bi bi-book"></i></div><div class="book-info"><div class="book-title">Eng. de Software Moderna</div><div class="book-author">Marco Tulio Valente</div><span class="badge-status badge-emprestado"><i class="bi bi-circle-fill" style="font-size:.4rem;"></i> Emprestado</span></div></div></div>
+      <div class="col-6 col-sm-4 col-md-3 col-xl-2 book-card-col" data-status="disponivel"><div class="book-card"><div class="book-cover"><i class="bi bi-book"></i></div><div class="book-info"><div class="book-title">O Hobbit</div><div class="book-author">J.R.R. Tolkien</div><span class="badge-status badge-disponivel"><i class="bi bi-circle-fill" style="font-size:.4rem;"></i> Disponível</span></div></div></div>
+      <div class="col-6 col-sm-4 col-md-3 col-xl-2 book-card-col" data-status="atrasado"><div class="book-card"><div class="book-cover"><i class="bi bi-book"></i></div><div class="book-info"><div class="book-title">1984</div><div class="book-author">George Orwell</div><span class="badge-status badge-atrasado"><i class="bi bi-circle-fill" style="font-size:.4rem;"></i> Atrasado</span></div></div></div>
+      <div class="col-6 col-sm-4 col-md-3 col-xl-2 book-card-col" data-status="disponivel"><div class="book-card"><div class="book-cover"><i class="bi bi-book"></i></div><div class="book-info"><div class="book-title">Dom Casmurro</div><div class="book-author">Machado de Assis</div><span class="badge-status badge-disponivel"><i class="bi bi-circle-fill" style="font-size:.4rem;"></i> Disponível</span></div></div></div>
+      <div class="col-6 col-sm-4 col-md-3 col-xl-2 book-card-col" data-status="emprestado"><div class="book-card"><div class="book-cover"><i class="bi bi-book"></i></div><div class="book-info"><div class="book-title">O Senhor dos Anéis</div><div class="book-author">J.R.R. Tolkien</div><span class="badge-status badge-emprestado"><i class="bi bi-circle-fill" style="font-size:.4rem;"></i> Emprestado</span></div></div></div>
+      <div class="col-6 col-sm-4 col-md-3 col-xl-2"><div class="book-card d-flex flex-column align-items-center justify-content-center" style="height:100%;min-height:220px;background:var(--cinza-bg);border:2px dashed var(--cinza-in);" data-bs-toggle="modal" data-bs-target="#modalLivro"><i class="bi bi-plus-circle" style="font-size:2rem;color:#c0ccd8;"></i><span style="font-size:.82rem;font-weight:700;color:#c0ccd8;margin-top:.5rem;">Adicionar livro</span></div></div>
+    </div>
+  </div>
+
+  <!-- EMPRÉSTIMOS -->
+  <div id="view-emprestimos" class="page-view">
+    <div class="d-flex justify-content-between align-items-start flex-wrap gap-2 mb-4">
+      <div><p class="page-title">Empréstimos</p><p class="page-sub">Controle quem tem o quê e quando devolver.</p></div>
+      <button class="btn-main" data-bs-toggle="modal" data-bs-target="#modalEmprestimo"><i class="bi bi-plus-lg"></i> Novo empréstimo</button>
+    </div>
+    <div style="border-bottom:2px solid var(--cinza-in);margin-bottom:1.2rem;">
+      <div class="d-flex gap-1">
+        <button class="tab-emp" onclick="filtrarEmp('ativos',this)" style="border:none;background:transparent;padding:.6rem 1rem;font-weight:800;font-size:.88rem;color:var(--verde);border-bottom:3px solid var(--verde);cursor:pointer;">Ativos (11)</button>
+        <button class="tab-emp" onclick="filtrarEmp('atrasados',this)" style="border:none;background:transparent;padding:.6rem 1rem;font-weight:800;font-size:.88rem;color:#9aaabf;border-bottom:3px solid transparent;cursor:pointer;">Atrasados (3)</button>
+        <button class="tab-emp" onclick="filtrarEmp('historico',this)" style="border:none;background:transparent;padding:.6rem 1rem;font-weight:800;font-size:.88rem;color:#9aaabf;border-bottom:3px solid transparent;cursor:pointer;">Histórico</button>
+      </div>
+    </div>
+    <div class="section-card">
+      <div class="tabela-wrap">
+        <table class="emprestimo-table">
+          <thead><tr><th>Livro</th><th>Emprestado para</th><th>Data empréstimo</th><th>Devolução prevista</th><th>Status</th><th>Ações</th></tr></thead>
+          <tbody id="tabela-emp-body">
+            <tr data-tipo="ativos">
+              <td><div class="emp-livro-info"><div class="emp-livro-capa"><i class="bi bi-book"></i></div><div><div style="font-size:.82rem;font-weight:800;">Eng. de Software Moderna</div><div style="font-size:.72rem;color:#6b7a90;">Marco Tulio Valente</div></div></div></td>
+              <td><div class="user-chip"><div class="user-avatar-sm">MB</div><div><div style="font-size:.82rem;font-weight:700;">Maria Bárbara</div><div style="font-size:.72rem;color:#9aaabf;">@Maria</div></div></div></td>
+              <td><span style="font-size:.82rem;">01/02/2026</span></td>
+              <td><span style="font-size:.82rem;">01/05/2026</span></td>
+              <td><span class="badge-status badge-disponivel"><i class="bi bi-circle-fill" style="font-size:.4rem;"></i> Em dia</span></td>
+              <td><div class="d-flex gap-1"><button class="btn-icon" style="width:30px;height:30px;font-size:.8rem;background:var(--verde-pale);color:var(--verde-esc);" title="Registrar devolução" onclick="registrarDevolucao(this)"><i class="bi bi-check-lg"></i></button><button class="btn-icon" style="width:30px;height:30px;font-size:.8rem;" title="Ver detalhes"><i class="bi bi-eye"></i></button></div></td>
+            </tr>
+            <tr data-tipo="atrasados">
+              <td><div class="emp-livro-info"><div class="emp-livro-capa"><i class="bi bi-book"></i></div><div><div style="font-size:.82rem;font-weight:800;">O Hobbit</div><div style="font-size:.72rem;color:#6b7a90;">J.R.R. Tolkien</div></div></div></td>
+              <td><div class="user-chip"><div class="user-avatar-sm" style="background:linear-gradient(135deg,#e63946,#7b5ea7);">JS</div><div><div style="font-size:.82rem;font-weight:700;">João Silva</div><div style="font-size:.72rem;color:#9aaabf;">@João</div></div></div></td>
+              <td><span style="font-size:.82rem;">01/03/2026</span></td>
+              <td><span style="font-size:.82rem;color:var(--vermelho);font-weight:800;">15/04/2026</span></td>
+              <td><span class="badge-status badge-atrasado"><i class="bi bi-circle-fill" style="font-size:.4rem;"></i> Atrasado</span></td>
+              <td><div class="d-flex gap-1"><button class="btn-icon" style="width:30px;height:30px;font-size:.8rem;background:var(--verde-pale);color:var(--verde-esc);" onclick="registrarDevolucao(this)"><i class="bi bi-check-lg"></i></button><button class="btn-icon" style="width:30px;height:30px;font-size:.8rem;background:#fde8e8;color:var(--vermelho);" title="Cobrar devolução"><i class="bi bi-bell"></i></button></div></td>
+            </tr>
+            <tr data-tipo="ativos">
+              <td><div class="emp-livro-info"><div class="emp-livro-capa"><i class="bi bi-book"></i></div><div><div style="font-size:.82rem;font-weight:800;">1984</div><div style="font-size:.72rem;color:#6b7a90;">George Orwell</div></div></div></td>
+              <td><div class="user-chip"><div class="user-avatar-sm" style="background:linear-gradient(135deg,var(--amarelo),#fd7e14);">AC</div><div><div style="font-size:.82rem;font-weight:700;">Ana Clara</div><div style="font-size:.72rem;color:#9aaabf;">@AnaClaraa</div></div></div></td>
+              <td><span style="font-size:.82rem;">10/05/2026</span></td>
+              <td><span style="font-size:.82rem;">23/05/2026</span></td>
+              <td><span class="badge-status badge-emprestado"><i class="bi bi-circle-fill" style="font-size:.4rem;"></i> Emprestado</span></td>
+              <td><div class="d-flex gap-1"><button class="btn-icon" style="width:30px;height:30px;font-size:.8rem;background:var(--verde-pale);color:var(--verde-esc);" onclick="registrarDevolucao(this)"><i class="bi bi-check-lg"></i></button><button class="btn-icon" style="width:30px;height:30px;font-size:.8rem;"><i class="bi bi-eye"></i></button></div></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- PERFIL -->
+  <div id="view-perfil" class="page-view">
+    <p class="page-title">Meu Perfil</p><p class="page-sub">Gerencie suas informações pessoais.</p>
+    <div class="row g-3">
+      <div class="col-lg-4">
+        <div class="section-card text-center">
+          <div class="profile-avatar" style="width:80px;height:80px;font-size:1.8rem;margin:0 auto 1rem;">MB</div>
+          <div style="font-size:1.1rem;font-weight:900;color:var(--azul-esc);">Maria Bárbara Vieira</div>
+          <div style="font-size:.85rem;font-weight:600;color:#6b7a90;">maria@email.com</div>
+          <div class="mt-3"><span class="badge-status badge-disponivel"><i class="bi bi-shield-check me-1"></i> Administrador</span></div>
+          <hr style="border-color:var(--cinza-in);margin:1.2rem 0;">
+          <div style="font-size:.82rem;font-weight:700;color:#6b7a90;"><div class="mb-1"><i class="bi bi-calendar3 me-2"></i> Membro desde Jan/2026</div><div class="mb-1"><i class="bi bi-book me-2"></i> 312 livros no acervo</div><div><i class="bi bi-arrow-right-circle me-2"></i> 14 empréstimos ativos</div></div>
+          <button class="btn-main mt-3 w-100"><i class="bi bi-camera me-1"></i> Alterar foto</button>
+        </div>
+      </div>
+      <div class="col-lg-8">
+        <div class="section-card">
+          <h6 style="font-weight:900;color:var(--azul-esc);margin-bottom:1.2rem;">Informações pessoais</h6>
+          <div class="row g-3">
+            <div class="col-md-6"><label class="form-label">Nome completo</label><input type="text" class="form-control" value="Maria Bárbara Vieira e Silva"/></div>
+            <div class="col-md-6"><label class="form-label">Data de nascimento</label><input type="date" class="form-control" value="1998-03-15"/></div>
+            <div class="col-md-6"><label class="form-label">E-mail</label><input type="email" class="form-control" value="maria@email.com"/></div>
+            <div class="col-md-6"><label class="form-label">Telefone (opcional)</label><input type="text" class="form-control" placeholder="(00) 00000-0000"/></div>
+            <div class="col-12"><label class="form-label">Bio (opcional)</label><textarea class="form-control" rows="3" placeholder="Conte um pouco sobre você e seus livros favoritos…"></textarea></div>
+          </div>
+          <div class="d-flex gap-2 mt-3">
+            <button class="btn-main" onclick="mostrarToast('Perfil salvo com sucesso!')"><i class="bi bi-check me-1"></i> Salvar alterações</button>
+            <button class="btn-outline" onclick="irPara('config', null)"><i class="bi bi-key me-1"></i> Alterar senha</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CONFIGURAÇÕES -->
+  <div id="view-config" class="page-view">
+    <p class="page-title">Configurações</p><p class="page-sub">Personalize sua experiência no Zelo.</p>
+    <div class="row g-3">
+      <div class="col-lg-6">
+        <div class="section-card">
+          <h6 style="font-weight:900;color:var(--azul-esc);margin-bottom:1.2rem;"><i class="bi bi-bell me-2" style="color:var(--verde);"></i>Notificações</h6>
+          <div class="d-flex flex-column gap-3">
+            <div class="d-flex justify-content-between align-items-center"><div><div style="font-weight:700;font-size:.9rem;">Empréstimos atrasados</div><div style="font-size:.78rem;color:#9aaabf;">Receber alertas de atrasos</div></div><div class="form-check form-switch mb-0"><input class="form-check-input" type="checkbox" checked style="width:2.5rem;height:1.2rem;cursor:pointer;"></div></div>
+            <div class="d-flex justify-content-between align-items-center"><div><div style="font-weight:700;font-size:.9rem;">Devoluções próximas</div><div style="font-size:.78rem;color:#9aaabf;">Aviso 2 dias antes do vencimento</div></div><div class="form-check form-switch mb-0"><input class="form-check-input" type="checkbox" checked style="width:2.5rem;height:1.2rem;cursor:pointer;"></div></div>
+            <div class="d-flex justify-content-between align-items-center"><div><div style="font-weight:700;font-size:.9rem;">Novos membros no grupo</div><div style="font-size:.78rem;color:#9aaabf;">Alertar quando alguém entrar</div></div><div class="form-check form-switch mb-0"><input class="form-check-input" type="checkbox" style="width:2.5rem;height:1.2rem;cursor:pointer;"></div></div>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-6">
+        <div class="section-card">
+          <h6 style="font-weight:900;color:var(--azul-esc);margin-bottom:1.2rem;"><i class="bi bi-shield-lock me-2" style="color:var(--azul-med);"></i>Segurança</h6>
+          <div class="d-flex flex-column gap-2">
+            <a href="login.html" class="btn-outline w-100 justify-content-start"><i class="bi bi-key" style="color:var(--azul-med);"></i> Alterar senha</a>
+            <a href="login.html" class="btn-outline w-100 justify-content-start"><i class="bi bi-envelope" style="color:var(--azul-med);"></i> Alterar e-mail</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<!-- MODAL EMPRÉSTIMO -->
+<div class="modal fade" id="modalEmprestimo" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content" style="border-radius:20px;border:none;">
+      <div class="modal-header"><h5 class="modal-title"><i class="bi bi-arrow-right-circle me-2" style="color:var(--verde);"></i>Registrar empréstimo</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+      <div class="modal-body">
+        <div class="mb-3"><label class="form-label">Selecionar obra</label><select class="form-select"><option value="">Escolha um livro…</option><option>Invencível — Robert Kirkman</option><option>O Hobbit — J.R.R. Tolkien</option><option>Dom Casmurro — Machado de Assis</option></select></div>
+        <div class="mb-3"><label class="form-label">Emprestado para</label><input type="text" class="form-control" placeholder="Nome ou @usuário"/></div>
+        <div class="row g-2 mb-3"><div class="col-6"><label class="form-label">Data do empréstimo</label><input type="date" class="form-control" id="data-emp"/></div><div class="col-6"><label class="form-label">Devolução prevista</label><input type="date" class="form-control" id="data-dev"/></div></div>
+        <div class="mb-2"><label class="form-label">Observação <span style="font-weight:600;color:#9aaabf;">(opcional)</span></label><textarea class="form-control" rows="2" placeholder="Alguma observação sobre o empréstimo…"></textarea></div>
+      </div>
+      <div class="modal-footer"><button type="button" class="btn-outline" data-bs-dismiss="modal">Cancelar</button><button type="button" class="btn-main" data-bs-dismiss="modal" onclick="mostrarToast('Empréstimo registrado com sucesso!')"><i class="bi bi-check-circle me-1"></i> Registrar</button></div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL LIVRO -->
+<div class="modal fade" id="modalLivro" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content" style="border-radius:20px;border:none;">
+      <div class="modal-header"><h5 class="modal-title"><i class="bi bi-book me-2" style="color:var(--verde);"></i>Adicionar livro</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+      <div class="modal-body">
+        <div class="mb-3"><label class="form-label">Título</label><input type="text" class="form-control" placeholder="Título da obra"/></div>
+        <div class="row g-2 mb-3"><div class="col-8"><label class="form-label">Autor(es)</label><input type="text" class="form-control" placeholder="Nome do autor"/></div><div class="col-4"><label class="form-label">Edição</label><input type="text" class="form-control" placeholder="Ex: 3ª"/></div></div>
+        <div class="row g-2 mb-3"><div class="col-6"><label class="form-label">ISBN (opcional)</label><input type="text" class="form-control" placeholder="000-0-00-000000-0"/></div><div class="col-6"><label class="form-label">Editora</label><input type="text" class="form-control" placeholder="Nome da editora"/></div></div>
+        <div class="mb-3"><label class="form-label">Gênero</label><select class="form-select"><option>Selecione…</option><option>Ficção científica</option><option>Fantasia</option><option>Romance</option><option>Terror</option><option>Técnico/Educacional</option><option>Autoajuda</option><option>Biografia</option><option>Outro</option></select></div>
+        <div><label class="form-label">Código do exemplar</label><input type="text" class="form-control" placeholder="Ex: ex1, ex2…"/><div style="font-size:.75rem;color:#9aaabf;font-weight:600;margin-top:.3rem;">Identificador único para controle físico.</div></div>
+      </div>
+      <div class="modal-footer"><button type="button" class="btn-outline" data-bs-dismiss="modal">Cancelar</button><button type="button" class="btn-main" data-bs-dismiss="modal" onclick="mostrarToast('Livro adicionado ao acervo!')"><i class="bi bi-plus-circle me-1"></i> Adicionar</button></div>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div style="position:fixed;bottom:1.5rem;right:1.5rem;z-index:999;">
+  <div id="toast-feedback" style="background:var(--azul-esc);color:#fff;padding:.85rem 1.3rem;border-radius:14px;font-size:.88rem;font-weight:700;box-shadow:0 8px 28px rgba(13,31,64,.25);display:none;align-items:center;gap:.6rem;max-width:280px;">
+    <i class="bi bi-check-circle-fill" style="color:var(--verde);font-size:1rem;"></i>
+    <span id="toast-msg">Ação realizada!</span>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+function irPara(pagina, btn) {
+  document.querySelectorAll('.page-view').forEach(v => v.classList.remove('active'));
+  document.getElementById('view-' + pagina).classList.add('active');
+  document.querySelectorAll('.nav-item-link').forEach(b => b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+  fecharSidebar(); fecharDropdowns();
+}
+function abrirSidebar() { document.getElementById('sidebar').classList.add('open'); document.getElementById('overlay').classList.add('open'); }
+function fecharSidebar() { document.getElementById('sidebar').classList.remove('open'); document.getElementById('overlay').classList.remove('open'); }
+function toggleNotif() { document.getElementById('profilePanel').classList.remove('open'); document.getElementById('notifPanel').classList.toggle('open'); }
+function togglePerfil() { document.getElementById('notifPanel').classList.remove('open'); document.getElementById('profilePanel').classList.toggle('open'); }
+function fecharDropdowns() { document.getElementById('notifPanel').classList.remove('open'); document.getElementById('profilePanel').classList.remove('open'); }
+document.addEventListener('click', e => { if (!e.target.closest('.btn-icon') && !e.target.closest('.avatar-btn') && !e.target.closest('#notifPanel') && !e.target.closest('#profilePanel')) fecharDropdowns(); });
+function marcarTodasLidas() { document.querySelectorAll('.notif-dot-item').forEach(d => d.style.background='var(--cinza-in)'); document.querySelector('.btn-icon .notif-dot').style.display='none'; }
+function filtrarStatus(status) { document.querySelectorAll('.book-card-col').forEach(col => { col.style.display = (status==='todos' || col.dataset.status===status) ? '' : 'none'; }); }
+function filtrarEmp(tipo, btn) {
+  document.querySelectorAll('.tab-emp').forEach(t => { t.style.color='#9aaabf'; t.style.borderBottomColor='transparent'; });
+  btn.style.color='var(--verde)'; btn.style.borderBottomColor='var(--verde)';
+  document.querySelectorAll('#tabela-emp-body tr').forEach(tr => {
+    tr.style.display = tipo==='historico' ? 'none' : (tipo==='ativos' && tr.dataset.tipo!=='atrasados') || (tipo==='atrasados' && tr.dataset.tipo==='atrasados') ? '' : 'none';
+  });
+}
+function registrarDevolucao(btn) { const row=btn.closest('tr'); row.style.opacity='.4'; row.style.transition='opacity .4s'; mostrarToast('Devolução registrada!'); setTimeout(()=>row.remove(),500); }
+function mostrarToast(msg) { const t=document.getElementById('toast-feedback'); document.getElementById('toast-msg').textContent=msg; t.style.display='flex'; setTimeout(()=>{t.style.display='none';},3000); }
+function buscarLivros(q) { if(!q)return; irPara('acervos',null); document.querySelectorAll('.book-card-col').forEach(col=>{col.style.display=col.textContent.toLowerCase().includes(q.toLowerCase())?'':'none';}); }
+document.getElementById('modalEmprestimo').addEventListener('show.bs.modal',()=>{ document.getElementById('data-emp').value=new Date().toISOString().split('T')[0]; });
+</script>
+</body>
+</html>

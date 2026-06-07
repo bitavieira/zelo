@@ -1,0 +1,878 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Zelo — Criar Acervo</title>
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"/>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet"/>
+
+  <style>
+    :root {
+      --verde:      #2DBE6C;
+      --verde-esc:  #1e9e56;
+      --verde-pale: #e8f8ef;
+      --azul-esc:   #0d1f40;
+      --azul-med:   #1a3a6b;
+      --cinza-bg:   #f0f3f7;
+      --cinza-card: #ffffff;
+      --cinza-in:   #e8ecf2;
+      --sidebar-w:  260px;
+      --topbar-h:   68px;
+      --amarelo:    #ffb703;
+      --vermelho:   #e63946;
+    }
+
+    * { font-family: 'Nunito', sans-serif; box-sizing: border-box; }
+    body { background: var(--cinza-bg); margin: 0; overflow-x: hidden; }
+
+    /* ── SIDEBAR ── */
+    .sidebar {
+      position: fixed; top: 0; left: 0;
+      width: var(--sidebar-w); height: 100vh;
+      background: var(--azul-esc);
+      display: flex; flex-direction: column;
+      z-index: 200; transition: transform .3s ease;
+    }
+    .sidebar-logo {
+      display: flex; align-items: center; gap: .7rem;
+      padding: 1.4rem 1.6rem 1rem;
+      border-bottom: 1px solid rgba(255,255,255,.08);
+      text-decoration: none;
+    }
+    .sidebar-logo span { font-size: 1.6rem; font-weight: 900; color: #fff; letter-spacing: -1px; }
+    .nav-section { padding: 1rem .8rem .3rem; font-size: .7rem; font-weight: 800; color: rgba(255,255,255,.35); letter-spacing: 1.2px; text-transform: uppercase; }
+    .nav-item-link {
+      display: flex; align-items: center; gap: .75rem;
+      padding: .65rem 1rem; margin: .15rem .6rem;
+      border-radius: 12px; color: rgba(255,255,255,.65);
+      text-decoration: none; font-size: .93rem; font-weight: 700;
+      transition: all .18s; cursor: pointer;
+      border: none; background: transparent;
+      width: calc(100% - 1.2rem); text-align: left;
+    }
+    .nav-item-link i { font-size: 1.05rem; min-width: 20px; }
+    .nav-item-link:hover { background: rgba(255,255,255,.08); color: #fff; }
+    .nav-item-link.active { background: var(--verde); color: #fff; box-shadow: 0 4px 14px rgba(45,190,108,.35); }
+    .sidebar-footer { margin-top: auto; padding: 1rem .8rem 1.4rem; border-top: 1px solid rgba(255,255,255,.08); }
+
+    /* ── TOPBAR ── */
+    .topbar {
+      position: fixed; top: 0; left: var(--sidebar-w); right: 0;
+      height: var(--topbar-h); background: #fff;
+      border-bottom: 1px solid var(--cinza-in);
+      display: flex; align-items: center; padding: 0 1.8rem; gap: 1rem; z-index: 100;
+    }
+    .topbar-search { flex: 1; max-width: 420px; position: relative; }
+    .topbar-search input {
+      width: 100%; background: var(--cinza-in); border: 2px solid transparent;
+      border-radius: 50px; padding: .5rem 1rem .5rem 2.6rem;
+      font-size: .9rem; font-weight: 600; color: var(--azul-esc);
+      transition: border-color .2s; font-family: 'Nunito', sans-serif;
+    }
+    .topbar-search input:focus { outline: none; border-color: var(--verde); background: #fff; }
+    .topbar-search i { position: absolute; left: .9rem; top: 50%; transform: translateY(-50%); color: #9aaabf; font-size: 1rem; }
+    .topbar-right { margin-left: auto; display: flex; align-items: center; gap: .6rem; }
+    .btn-icon { width: 40px; height: 40px; border-radius: 50%; border: none; background: var(--cinza-in); color: var(--azul-esc); font-size: 1.05rem; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: background .2s; }
+    .btn-icon:hover { background: var(--verde-pale); color: var(--verde-esc); }
+    .avatar-btn { width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(135deg, var(--verde) 0%, var(--azul-med) 100%); color: #fff; font-weight: 800; font-size: .9rem; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+
+    /* ── CONTEÚDO ── */
+    .main-content { margin-left: var(--sidebar-w); margin-top: var(--topbar-h); padding: 2rem 2rem 4rem; min-height: calc(100vh - var(--topbar-h)); }
+
+    /* ── BREADCRUMB ── */
+    .breadcrumb-bar {
+      display: flex; align-items: center; gap: .5rem;
+      font-size: .85rem; font-weight: 700; color: #9aaabf;
+      margin-bottom: 1.6rem;
+    }
+    .breadcrumb-bar a { color: #9aaabf; text-decoration: none; transition: color .15s; }
+    .breadcrumb-bar a:hover { color: var(--verde); }
+    .breadcrumb-bar .atual { color: var(--azul-esc); }
+
+    /* ── CARD PRINCIPAL ── */
+    .form-card {
+      background: var(--cinza-card);
+      border-radius: 24px;
+      box-shadow: 0 2px 18px rgba(13,31,64,.08);
+      overflow: hidden;
+    }
+
+    /* ── CABEÇALHO DO FORM ── */
+    .form-header {
+      background: linear-gradient(120deg, var(--azul-esc) 0%, var(--azul-med) 100%);
+      padding: 2rem 2.2rem 1.6rem;
+      display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem;
+    }
+    .form-header-text h1 { font-size: 1.5rem; font-weight: 900; color: #fff; margin: 0 0 .3rem; }
+    .form-header-text p  { font-size: .88rem; font-weight: 600; color: rgba(255,255,255,.65); margin: 0; }
+    .form-header-icon {
+      width: 56px; height: 56px; border-radius: 16px;
+      background: rgba(255,255,255,.1);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.6rem; color: var(--verde); flex-shrink: 0;
+    }
+
+    /* ── CORPO DO FORM ── */
+    .form-body { padding: 2rem 2.2rem; }
+
+    /* ── LABELS E INPUTS ── */
+    .form-label {
+      font-weight: 800; font-size: .84rem; color: var(--azul-esc); margin-bottom: .4rem;
+    }
+    .form-label span { font-weight: 600; color: #9aaabf; font-size: .78rem; }
+    .form-control, .form-select {
+      background: var(--cinza-in); border: 2px solid transparent;
+      border-radius: 14px; padding: .7rem 1rem;
+      font-size: .93rem; font-weight: 600; color: var(--azul-esc);
+      font-family: 'Nunito', sans-serif; transition: all .2s;
+    }
+    .form-control:focus, .form-select:focus {
+      background: #fff; border-color: var(--verde);
+      box-shadow: 0 0 0 4px rgba(45,190,108,.12); outline: none;
+    }
+    .form-control.is-invalid { border-color: var(--vermelho); background: #fff5f5; }
+    .invalid-feedback { font-weight: 700; font-size: .8rem; }
+    textarea.form-control { resize: vertical; min-height: 100px; }
+
+    /* ── CONTADOR DE CARACTERES ── */
+    .char-count { font-size: .75rem; font-weight: 700; color: #9aaabf; text-align: right; margin-top: .25rem; }
+    .char-count.quase { color: var(--amarelo); }
+    .char-count.cheio { color: var(--vermelho); }
+
+    /* ── CARDS DE VISIBILIDADE ── */
+    .vis-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+
+    .vis-card {
+      border: 2px solid var(--cinza-in);
+      border-radius: 18px; padding: 1.3rem 1.2rem;
+      cursor: pointer; transition: all .22s;
+      position: relative; background: #fff;
+    }
+    .vis-card:hover { border-color: #b0c8f0; }
+    .vis-card.selected-pub  { border-color: var(--verde); background: var(--verde-pale); }
+    .vis-card.selected-priv { border-color: var(--azul-med); background: #eef2fb; }
+
+    .vis-radio {
+      position: absolute; top: 1rem; right: 1rem;
+      width: 20px; height: 20px; border-radius: 50%;
+      border: 2px solid var(--cinza-in);
+      display: flex; align-items: center; justify-content: center;
+      transition: all .2s;
+    }
+    .vis-radio-dot { width: 10px; height: 10px; border-radius: 50%; background: transparent; transition: background .2s; }
+    .vis-card.selected-pub  .vis-radio { border-color: var(--verde); }
+    .vis-card.selected-pub  .vis-radio-dot { background: var(--verde); }
+    .vis-card.selected-priv .vis-radio { border-color: var(--azul-med); }
+    .vis-card.selected-priv .vis-radio-dot { background: var(--azul-med); }
+
+    .vis-icon {
+      width: 48px; height: 48px; border-radius: 14px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.3rem; margin-bottom: .8rem;
+    }
+    .vis-pub-icon  { background: var(--verde-pale); color: var(--verde-esc); }
+    .vis-priv-icon { background: #eef2fb; color: var(--azul-med); }
+
+    .vis-card h6 { font-size: .95rem; font-weight: 900; color: var(--azul-esc); margin: 0 0 .25rem; }
+    .vis-card p  { font-size: .8rem; font-weight: 600; color: #6b7a90; margin: 0; line-height: 1.4; }
+    .vis-badge {
+      display: inline-block; margin-top: .6rem;
+      font-size: .7rem; font-weight: 800; border-radius: 20px; padding: .18rem .6rem;
+    }
+    .vis-badge-pub  { background: var(--verde-pale); color: var(--verde-esc); }
+    .vis-badge-priv { background: #eef2fb; color: var(--azul-med); }
+
+    /* ── SEÇÃO DE MEMBROS ── */
+    .members-box {
+      background: var(--cinza-bg); border-radius: 16px; padding: 1.2rem;
+      border: 2px dashed var(--cinza-in); display: none;
+    }
+    .members-box.show { display: block; animation: fadeIn .25s ease; }
+    @keyframes fadeIn { from{opacity:0;transform:translateY(6px)} to{opacity:1;transform:translateY(0)} }
+
+    .member-input-row { display: flex; gap: .6rem; }
+    .member-input-row .form-control { flex: 1; }
+    .btn-add-member {
+      background: var(--azul-esc); color: #fff;
+      border: none; border-radius: 12px; padding: .6rem 1rem;
+      font-weight: 800; font-size: .88rem; cursor: pointer;
+      display: flex; align-items: center; gap: .3rem;
+      white-space: nowrap; transition: background .2s;
+    }
+    .btn-add-member:hover { background: var(--azul-med); }
+
+    .member-tag {
+      display: inline-flex; align-items: center; gap: .4rem;
+      background: #fff; border: 2px solid var(--cinza-in);
+      border-radius: 50px; padding: .3rem .5rem .3rem .8rem;
+      font-size: .82rem; font-weight: 700; color: var(--azul-esc);
+      margin: .3rem .2rem 0 0;
+    }
+    .member-tag .avatar-mini {
+      width: 22px; height: 22px; border-radius: 50%;
+      background: linear-gradient(135deg, var(--verde), var(--azul-med));
+      color: #fff; font-size: .6rem; font-weight: 800;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .member-tag button {
+      background: transparent; border: none; cursor: pointer;
+      color: #9aaabf; font-size: .75rem; padding: 0; line-height: 1;
+      transition: color .15s;
+    }
+    .member-tag button:hover { color: var(--vermelho); }
+
+    /* ── DIVISOR ── */
+    .form-divider {
+      height: 1px; background: var(--cinza-in);
+      margin: 1.8rem 0;
+    }
+
+    /* ── DICA / INFO BOX ── */
+    .info-box {
+      background: var(--cinza-bg); border-radius: 14px;
+      padding: 1rem 1.1rem; display: flex; gap: .8rem; align-items: flex-start;
+      border-left: 4px solid var(--verde);
+    }
+    .info-box i { color: var(--verde); font-size: 1.1rem; flex-shrink: 0; margin-top: .1rem; }
+    .info-box p { font-size: .82rem; font-weight: 600; color: #5a6a7e; margin: 0; line-height: 1.5; }
+
+    /* ── BOTÕES RODAPÉ ── */
+    .form-footer {
+      padding: 1.4rem 2.2rem;
+      border-top: 1px solid var(--cinza-in);
+      display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap;
+    }
+    .btn-main {
+      background: var(--verde); color: #fff; font-weight: 800; font-size: .95rem;
+      border: none; border-radius: 50px; padding: .7rem 2rem; cursor: pointer;
+      transition: background .2s, transform .1s;
+      display: inline-flex; align-items: center; gap: .5rem;
+    }
+    .btn-main:hover  { background: var(--verde-esc); color: #fff; }
+    .btn-main:active { transform: scale(.98); }
+    .btn-main:disabled { background: #a8dfc9; cursor: not-allowed; }
+
+    .btn-outline {
+      background: transparent; color: var(--azul-esc); font-weight: 800; font-size: .92rem;
+      border: 2px solid var(--cinza-in); border-radius: 50px; padding: .65rem 1.6rem;
+      cursor: pointer; transition: all .2s; display: inline-flex; align-items: center; gap: .4rem;
+      text-decoration: none;
+    }
+    .btn-outline:hover { border-color: var(--azul-esc); color: var(--azul-esc); }
+
+    /* ── PREVIEW CARD (lado direito) ── */
+    .preview-sticky { position: sticky; top: calc(var(--topbar-h) + 1.5rem); }
+    .preview-card {
+      background: var(--cinza-card); border-radius: 20px;
+      box-shadow: 0 2px 18px rgba(13,31,64,.08);
+      overflow: hidden;
+    }
+    .preview-header {
+      background: linear-gradient(120deg, var(--azul-esc) 0%, var(--azul-med) 100%);
+      padding: 1.2rem; text-align: center;
+    }
+    .preview-header p { font-size: .78rem; font-weight: 700; color: rgba(255,255,255,.5); margin: 0 0 .8rem; text-transform: uppercase; letter-spacing: .8px; }
+    .preview-cover {
+      width: 72px; height: 72px; border-radius: 18px;
+      background: rgba(255,255,255,.12);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.8rem; color: rgba(255,255,255,.6);
+      margin: 0 auto .8rem;
+    }
+    .preview-nome { font-size: 1rem; font-weight: 900; color: #fff; word-break: break-word; }
+    .preview-desc { font-size: .78rem; font-weight: 600; color: rgba(255,255,255,.6); margin-top: .3rem; word-break: break-word; }
+
+    .preview-body { padding: 1.2rem; }
+    .preview-row {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: .6rem 0; border-bottom: 1px solid var(--cinza-in);
+      font-size: .82rem; font-weight: 700;
+    }
+    .preview-row:last-child { border-bottom: none; }
+    .preview-row .label { color: #9aaabf; }
+    .preview-row .valor { color: var(--azul-esc); text-align: right; }
+    .preview-badge { font-size: .72rem; font-weight: 800; border-radius: 20px; padding: .2rem .6rem; }
+
+    /* ── STEPS TRACKER ── */
+    .steps-tracker {
+      display: flex; gap: .4rem; align-items: center; margin-bottom: 1.8rem;
+    }
+    .step-item {
+      display: flex; align-items: center; gap: .5rem;
+      font-size: .78rem; font-weight: 800; color: #9aaabf;
+    }
+    .step-item.done  { color: var(--verde-esc); }
+    .step-item.curr  { color: var(--azul-esc); }
+    .step-num {
+      width: 24px; height: 24px; border-radius: 50%; border: 2px solid var(--cinza-in);
+      display: flex; align-items: center; justify-content: center; font-size: .72rem; font-weight: 800;
+      flex-shrink: 0; transition: all .2s;
+    }
+    .step-item.done .step-num { background: var(--verde); border-color: var(--verde); color: #fff; }
+    .step-item.curr .step-num { background: var(--azul-esc); border-color: var(--azul-esc); color: #fff; }
+    .step-sep { flex: 1; height: 2px; background: var(--cinza-in); min-width: 16px; max-width: 40px; }
+    .step-sep.done { background: var(--verde); }
+
+    /* ── TOAST ── */
+    .toast-fixed { position: fixed; bottom: 1.5rem; right: 1.5rem; z-index: 999; }
+    #toast-ok { background: var(--azul-esc); color: #fff; padding: .85rem 1.3rem; border-radius: 14px; font-size: .88rem; font-weight: 700; box-shadow: 0 8px 28px rgba(13,31,64,.25); display: none; align-items: center; gap: .6rem; max-width: 300px; }
+
+    /* ── OVERLAY MOBILE ── */
+    .sidebar-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.45); z-index: 199; }
+
+    @media (max-width: 991px) { .preview-sticky { position: static; } }
+    @media (max-width: 768px) {
+      .sidebar { transform: translateX(-100%); }
+      .sidebar.open { transform: translateX(0); }
+      .sidebar-overlay.open { display: block; }
+      .topbar { left: 0; }
+      .main-content { margin-left: 0; padding: 1.2rem 1rem 3rem; }
+      .btn-mob-menu { display: flex !important; width: 38px; height: 38px; border-radius: 10px; border: none; background: var(--cinza-in); color: var(--azul-esc); font-size: 1.1rem; align-items: center; justify-content: center; cursor: pointer; margin-right: .3rem; }
+      .vis-grid { grid-template-columns: 1fr; }
+      .form-footer { flex-direction: column-reverse; }
+      .form-footer .btn-main, .form-footer .btn-outline { width: 100%; justify-content: center; }
+      .form-header { flex-direction: column; }
+      .form-header-icon { display: none; }
+    }
+    @media (min-width: 769px) { .btn-mob-menu { display: none !important; } }
+  </style>
+</head>
+<body>
+
+<div class="sidebar-overlay" id="overlay" onclick="fecharSidebar()"></div>
+
+<!-- ══ SIDEBAR ══ -->
+<aside class="sidebar" id="sidebar">
+  <a class="sidebar-logo" href="index.html">
+    <svg width="34" height="34" viewBox="0 0 80 80" fill="none">
+      <rect x="8" y="52" width="64" height="5" rx="2.5" fill="white"/>
+      <rect x="14" y="28" width="10" height="24" rx="2" fill="#90b4f5"/>
+      <rect x="26" y="22" width="10" height="30" rx="2" fill="#2DBE6C"/>
+      <rect x="38" y="30" width="8" height="22" rx="2" fill="white"/>
+      <rect x="48" y="26" width="10" height="26" rx="2" fill="#2DBE6C" opacity=".7"/>
+      <path d="M22 64 Q40 74 58 64" stroke="#2DBE6C" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+      <circle cx="22" cy="64" r="3" fill="#2DBE6C"/><circle cx="58" cy="64" r="3" fill="#2DBE6C"/>
+    </svg>
+    <span>zelo</span>
+  </a>
+
+  <div class="nav-section">Menu</div>
+  <a href="dashboard.html" class="nav-item-link"><i class="bi bi-house-fill"></i> Início</a>
+  <a href="dashboard.html" class="nav-item-link active"><i class="bi bi-collection-fill"></i> Meus acervos</a>
+  <a href="dashboard.html" class="nav-item-link"><i class="bi bi-arrow-left-right"></i> Empréstimos<span class="badge" style="margin-left:auto;background:#ffb703;color:#0d1f40;font-size:.68rem;font-weight:800;border-radius:20px;padding:.15rem .5rem;">3</span></a>
+
+  <div class="nav-section">Conta</div>
+  <a href="dashboard.html" class="nav-item-link"><i class="bi bi-person-fill"></i> Perfil</a>
+  <a href="dashboard.html" class="nav-item-link"><i class="bi bi-gear-fill"></i> Configurações</a>
+
+  <div class="sidebar-footer">
+    <a href="login.html" class="nav-item-link" style="color:rgba(255,255,255,.5);"><i class="bi bi-box-arrow-left"></i> Sair</a>
+  </div>
+</aside>
+
+<!-- ══ TOPBAR ══ -->
+<header class="topbar">
+  <button class="btn-mob-menu" onclick="abrirSidebar()"><i class="bi bi-list"></i></button>
+  <div class="topbar-search">
+    <i class="bi bi-search"></i>
+    <input type="text" placeholder="Buscar acervos, livros, autores…"/>
+  </div>
+  <div class="topbar-right">
+    <button class="btn-icon"><i class="bi bi-bell-fill"></i></button>
+    <button class="avatar-btn">MB</button>
+  </div>
+</header>
+
+<!-- ══ CONTEÚDO ══ -->
+<main class="main-content">
+
+  <!-- Breadcrumb -->
+  <div class="breadcrumb-bar">
+    <a href="dashboard.html"><i class="bi bi-house me-1"></i>Início</a>
+    <i class="bi bi-chevron-right" style="font-size:.7rem;"></i>
+    <a href="dashboard.html">Meus acervos</a>
+    <i class="bi bi-chevron-right" style="font-size:.7rem;"></i>
+    <span class="atual">Criar acervo</span>
+  </div>
+
+  <!-- Steps tracker -->
+  <div class="steps-tracker">
+    <div class="step-item curr" id="step-1">
+      <div class="step-num">1</div>
+      <span>Informações</span>
+    </div>
+    <div class="step-sep" id="sep-1"></div>
+    <div class="step-item" id="step-2">
+      <div class="step-num">2</div>
+      <span>Visibilidade</span>
+    </div>
+    <div class="step-sep" id="sep-2"></div>
+    <div class="step-item" id="step-3">
+      <div class="step-num">3</div>
+      <span>Membros</span>
+    </div>
+    <div class="step-sep" id="sep-3"></div>
+    <div class="step-item" id="step-4">
+      <div class="step-num">4</div>
+      <span>Confirmar</span>
+    </div>
+  </div>
+
+  <div class="row g-4 align-items-start">
+
+    <!-- ── FORMULÁRIO ── -->
+    <div class="col-lg-8">
+      <div class="form-card">
+
+        <!-- Header -->
+        <div class="form-header">
+          <div class="form-header-text">
+            <h1><i class="bi bi-collection me-2"></i>Criar novo acervo</h1>
+            <p>Configure as informações e permissões do seu acervo.</p>
+          </div>
+          <div class="form-header-icon">
+            <i class="bi bi-bookmarks-fill"></i>
+          </div>
+        </div>
+
+        <!-- Body -->
+        <div class="form-body">
+
+          <!-- ── SEÇÃO 1: INFORMAÇÕES ── -->
+          <p style="font-size:.78rem;font-weight:800;color:#9aaabf;text-transform:uppercase;letter-spacing:.9px;margin-bottom:1rem;">
+            <i class="bi bi-info-circle me-1"></i> 1. Informações básicas
+          </p>
+
+          <!-- Nome -->
+          <div class="mb-3">
+            <label class="form-label">
+              Nome do acervo
+              <span>* obrigatório</span>
+            </label>
+            <input
+              type="text"
+              class="form-control"
+              id="nome-acervo"
+              placeholder="Ex: Minha biblioteca pessoal"
+              maxlength="60"
+              oninput="atualizarPreview(); contarChars('nome-acervo', 'count-nome', 60)"
+            />
+            <div class="char-count" id="count-nome">0 / 60</div>
+            <div class="invalid-feedback">O nome do acervo é obrigatório.</div>
+          </div>
+
+          <!-- Descrição -->
+          <div class="mb-3">
+            <label class="form-label">
+              Descrição
+              <span>(opcional)</span>
+            </label>
+            <textarea
+              class="form-control"
+              id="desc-acervo"
+              rows="3"
+              maxlength="300"
+              placeholder="Fale um pouco sobre este acervo, que tipo de livros tem, para quem é…"
+              oninput="atualizarPreview(); contarChars('desc-acervo', 'count-desc', 300)"
+            ></textarea>
+            <div class="char-count" id="count-desc">0 / 300</div>
+          </div>
+
+          <!-- Categoria -->
+          <div class="mb-3">
+            <label class="form-label">Categoria principal <span>(opcional)</span></label>
+            <select class="form-select" id="categoria-acervo" onchange="atualizarPreview()">
+              <option value="">Selecione uma categoria…</option>
+              <option value="Literatura">📚 Literatura</option>
+              <option value="Ficção científica">🚀 Ficção científica</option>
+              <option value="Fantasia">🐉 Fantasia</option>
+              <option value="Romance">💌 Romance</option>
+              <option value="Terror">👻 Terror</option>
+              <option value="Técnico / Educacional">🎓 Técnico / Educacional</option>
+              <option value="Autoajuda">🌱 Autoajuda</option>
+              <option value="Biografia">🧑‍💼 Biografia</option>
+              <option value="HQ / Mangá">🎨 HQ / Mangá</option>
+              <option value="Geral">📖 Geral</option>
+            </select>
+          </div>
+
+          <div class="form-divider"></div>
+
+          <!-- ── SEÇÃO 2: VISIBILIDADE ── -->
+          <p style="font-size:.78rem;font-weight:800;color:#9aaabf;text-transform:uppercase;letter-spacing:.9px;margin-bottom:1rem;">
+            <i class="bi bi-eye me-1"></i> 2. Visibilidade
+          </p>
+
+          <div class="vis-grid mb-3">
+
+            <!-- Público -->
+            <div class="vis-card selected-pub" id="card-pub" onclick="selecionarVis('pub')">
+              <div class="vis-radio"><div class="vis-radio-dot"></div></div>
+              <div class="vis-icon vis-pub-icon"><i class="bi bi-globe2"></i></div>
+              <h6>Público</h6>
+              <p>Qualquer pessoa pode visualizar os livros deste acervo.</p>
+              <span class="vis-badge vis-badge-pub">Recomendado para comunidade</span>
+            </div>
+
+            <!-- Privado -->
+            <div class="vis-card" id="card-priv" onclick="selecionarVis('priv')">
+              <div class="vis-radio"><div class="vis-radio-dot"></div></div>
+              <div class="vis-icon vis-priv-icon"><i class="bi bi-lock-fill"></i></div>
+              <h6>Privado</h6>
+              <p>Apenas usuários convidados podem acessar este acervo.</p>
+              <span class="vis-badge vis-badge-priv">Controle total de acesso</span>
+            </div>
+
+          </div>
+
+          <!-- Info contextual -->
+          <div class="info-box mb-0" id="info-vis">
+            <i class="bi bi-lightbulb-fill"></i>
+            <p id="info-vis-txt">Acervos públicos aparecem na busca da comunidade e podem ser encontrados por outros usuários do Zelo.</p>
+          </div>
+
+          <div class="form-divider"></div>
+
+          <!-- ── SEÇÃO 3: MEMBROS ── -->
+          <p style="font-size:.78rem;font-weight:800;color:#9aaabf;text-transform:uppercase;letter-spacing:.9px;margin-bottom:1rem;">
+            <i class="bi bi-people me-1"></i> 3. Membros <span style="font-weight:600;text-transform:none;letter-spacing:0;">(opcional)</span>
+          </p>
+
+          <!-- Toggle membros -->
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <div>
+              <div style="font-weight:700;font-size:.9rem;color:var(--azul-esc);">Convidar membros agora</div>
+              <div style="font-size:.78rem;font-weight:600;color:#9aaabf;">Você pode adicionar membros depois também.</div>
+            </div>
+            <div class="form-check form-switch mb-0">
+              <input class="form-check-input" type="checkbox" id="toggle-membros" style="width:2.5rem;height:1.2rem;cursor:pointer;" onchange="toggleMembros()">
+            </div>
+          </div>
+
+          <!-- Caixa de membros (oculta até ativar) -->
+          <div class="members-box" id="members-box">
+            <div class="member-input-row mb-2">
+              <input type="text" class="form-control" id="input-membro" placeholder="Nome ou @usuário" onkeydown="if(event.key==='Enter'){event.preventDefault();adicionarMembro();}"/>
+              <button class="btn-add-member" onclick="adicionarMembro()">
+                <i class="bi bi-plus-lg"></i> Adicionar
+              </button>
+            </div>
+            <div style="font-size:.75rem;font-weight:600;color:#9aaabf;margin-bottom:.6rem;">
+              Pressione Enter ou clique em Adicionar para convidar.
+            </div>
+            <div id="lista-membros"></div>
+          </div>
+
+          <div class="form-divider"></div>
+
+          <!-- ── SEÇÃO 4: OPÇÕES AVANÇADAS ── -->
+          <p style="font-size:.78rem;font-weight:800;color:#9aaabf;text-transform:uppercase;letter-spacing:.9px;margin-bottom:1rem;">
+            <i class="bi bi-sliders me-1"></i> 4. Opções adicionais
+          </p>
+
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label class="form-label">Prazo padrão de devolução <span>(dias)</span></label>
+              <input type="number" class="form-control" id="prazo-dev" value="14" min="1" max="365" oninput="atualizarPreview()"/>
+              <div style="font-size:.75rem;font-weight:600;color:#9aaabf;margin-top:.25rem;">Prazo sugerido ao registrar um empréstimo.</div>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Máximo de livros por empréstimo</label>
+              <input type="number" class="form-control" id="max-livros" value="3" min="1" max="50"/>
+              <div style="font-size:.75rem;font-weight:600;color:#9aaabf;margin-top:.25rem;">Limite de exemplares por leitor.</div>
+            </div>
+          </div>
+
+          <div class="mt-3">
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" id="notif-atraso" checked style="cursor:pointer;"/>
+              <label class="form-check-label" for="notif-atraso" style="font-size:.88rem;font-weight:700;color:var(--azul-esc);">
+                Receber notificações de empréstimos atrasados
+              </label>
+            </div>
+            <div class="form-check mt-2">
+              <input class="form-check-input" type="checkbox" id="notif-devolucao" checked style="cursor:pointer;"/>
+              <label class="form-check-label" for="notif-devolucao" style="font-size:.88rem;font-weight:700;color:var(--azul-esc);">
+                Receber aviso 2 dias antes da devolução
+              </label>
+            </div>
+            <div class="form-check mt-2">
+              <input class="form-check-input" type="checkbox" id="permitir-solicitacoes" style="cursor:pointer;"/>
+              <label class="form-check-label" for="permitir-solicitacoes" style="font-size:.88rem;font-weight:700;color:var(--azul-esc);">
+                Permitir que leitores solicitem empréstimos
+                <span style="font-size:.76rem;font-weight:600;color:#9aaabf;">(implementação futura)</span>
+              </label>
+            </div>
+          </div>
+
+        </div><!-- /form-body -->
+
+        <!-- Rodapé -->
+        <div class="form-footer">
+          <a href="dashboard.html" class="btn-outline">
+            <i class="bi bi-arrow-left"></i> Cancelar
+          </a>
+          <div class="d-flex gap-2 flex-wrap">
+            <button class="btn-outline" onclick="salvarRascunho()">
+              <i class="bi bi-floppy"></i> Salvar rascunho
+            </button>
+            <button class="btn-main" id="btn-criar" onclick="criarAcervo()">
+              <i class="bi bi-plus-circle"></i> Criar acervo
+            </button>
+          </div>
+        </div>
+
+      </div><!-- /form-card -->
+    </div><!-- /col -->
+
+    <!-- ── PREVIEW ── -->
+    <div class="col-lg-4">
+      <div class="preview-sticky">
+
+        <!-- Card de preview -->
+        <div class="preview-card mb-3">
+          <div class="preview-header">
+            <p>Preview do acervo</p>
+            <div class="preview-cover">
+              <i class="bi bi-collection" id="prev-icon"></i>
+            </div>
+            <div class="preview-nome" id="prev-nome">Nome do acervo</div>
+            <div class="preview-desc" id="prev-desc">Descrição aparecerá aqui…</div>
+          </div>
+          <div class="preview-body">
+            <div class="preview-row">
+              <span class="label">Visibilidade</span>
+              <span class="valor"><span class="preview-badge" id="prev-vis" style="background:var(--verde-pale);color:var(--verde-esc);">🌍 Público</span></span>
+            </div>
+            <div class="preview-row">
+              <span class="label">Categoria</span>
+              <span class="valor" id="prev-cat" style="color:#9aaabf;">Não definida</span>
+            </div>
+            <div class="preview-row">
+              <span class="label">Prazo padrão</span>
+              <span class="valor" id="prev-prazo">14 dias</span>
+            </div>
+            <div class="preview-row">
+              <span class="label">Membros</span>
+              <span class="valor" id="prev-membros">Só você</span>
+            </div>
+            <div class="preview-row">
+              <span class="label">Criado por</span>
+              <span class="valor">Maria Bárbara</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Dica -->
+        <div class="info-box">
+          <i class="bi bi-info-circle-fill"></i>
+          <p>Você poderá editar todas essas configurações depois de criar o acervo.</p>
+        </div>
+
+      </div>
+    </div>
+
+  </div><!-- /row -->
+</main>
+
+<!-- TOAST -->
+<div class="toast-fixed">
+  <div id="toast-ok" style="background:var(--azul-esc);color:#fff;padding:.85rem 1.3rem;border-radius:14px;font-size:.88rem;font-weight:700;box-shadow:0 8px 28px rgba(13,31,64,.25);display:none;align-items:center;gap:.6rem;max-width:300px;">
+    <i class="bi bi-check-circle-fill" style="color:var(--verde);font-size:1rem;"></i>
+    <span id="toast-msg">Ação realizada!</span>
+  </div>
+</div>
+
+<!-- MODAL SUCESSO -->
+<div class="modal fade" id="modalSucesso" tabindex="-1" data-bs-backdrop="static">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content" style="border-radius:24px;border:none;text-align:center;padding:2rem;">
+      <div style="width:72px;height:72px;background:var(--verde-pale);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:2rem;color:var(--verde);margin:0 auto 1.2rem;">
+        <i class="bi bi-check-circle-fill"></i>
+      </div>
+      <h5 style="font-weight:900;color:var(--azul-esc);font-size:1.3rem;">Acervo criado!</h5>
+      <p style="font-size:.9rem;font-weight:600;color:#6b7a90;margin-bottom:1.5rem;">
+        Seu acervo <strong id="modal-nome-acervo" style="color:var(--azul-esc);"></strong> foi criado com sucesso. Agora você pode começar a adicionar livros!
+      </p>
+      <div class="d-flex gap-2 justify-content-center flex-wrap">
+        <a href="dashboard.html" class="btn-outline"><i class="bi bi-house me-1"></i> Ir ao início</a>
+        <a href="dashboard.html" class="btn-main"><i class="bi bi-book me-1"></i> Adicionar livros</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+
+  /* ════════════════════════
+     VISIBILIDADE
+  ════════════════════════ */
+  let visAtual = 'pub';
+
+  function selecionarVis(tipo) {
+    visAtual = tipo;
+    const pub  = document.getElementById('card-pub');
+    const priv = document.getElementById('card-priv');
+    const info = document.getElementById('info-vis-txt');
+
+    pub.className  = 'vis-card' + (tipo === 'pub'  ? ' selected-pub'  : '');
+    priv.className = 'vis-card' + (tipo === 'priv' ? ' selected-priv' : '');
+
+    if (tipo === 'pub') {
+      info.textContent = 'Acervos públicos aparecem na busca da comunidade e podem ser encontrados por outros usuários do Zelo.';
+    } else {
+      info.textContent = 'Acervos privados só são acessíveis por membros convidados. Ideal para grupos de leitura fechados.';
+    }
+    atualizarPreview();
+    atualizarSteps();
+  }
+
+  /* ════════════════════════
+     MEMBROS
+  ════════════════════════ */
+  let membros = [];
+
+  function toggleMembros() {
+    const box = document.getElementById('members-box');
+    box.classList.toggle('show', document.getElementById('toggle-membros').checked);
+    atualizarPreview();
+  }
+
+  function adicionarMembro() {
+    const input = document.getElementById('input-membro');
+    const nome  = input.value.trim();
+    if (!nome || membros.includes(nome)) { input.value = ''; return; }
+    membros.push(nome);
+    renderMembros();
+    input.value = '';
+    atualizarPreview();
+  }
+
+  function removerMembro(nome) {
+    membros = membros.filter(m => m !== nome);
+    renderMembros();
+    atualizarPreview();
+  }
+
+  function renderMembros() {
+    const lista = document.getElementById('lista-membros');
+    lista.innerHTML = membros.map(m => `
+      <span class="member-tag">
+        <div class="avatar-mini">${m[0].toUpperCase()}</div>
+        ${m}
+        <button onclick="removerMembro('${m}')"><i class="bi bi-x-lg"></i></button>
+      </span>`).join('');
+  }
+
+  /* ════════════════════════
+     CONTADOR DE CARACTERES
+  ════════════════════════ */
+  function contarChars(inputId, countId, max) {
+    const val   = document.getElementById(inputId).value.length;
+    const el    = document.getElementById(countId);
+    el.textContent = `${val} / ${max}`;
+    el.className = 'char-count' + (val >= max ? ' cheio' : val >= max * .85 ? ' quase' : '');
+  }
+
+  /* ════════════════════════
+     PREVIEW AO VIVO
+  ════════════════════════ */
+  function atualizarPreview() {
+    const nome   = document.getElementById('nome-acervo').value.trim();
+    const desc   = document.getElementById('desc-acervo').value.trim();
+    const cat    = document.getElementById('categoria-acervo').value;
+    const prazo  = document.getElementById('prazo-dev').value;
+
+    document.getElementById('prev-nome').textContent = nome || 'Nome do acervo';
+    document.getElementById('prev-desc').textContent = desc || 'Descrição aparecerá aqui…';
+    document.getElementById('prev-cat').textContent  = cat  || '—';
+    document.getElementById('prev-prazo').textContent = (prazo || 14) + ' dias';
+
+    const visEl = document.getElementById('prev-vis');
+    if (visAtual === 'pub') {
+      visEl.textContent = '🌍 Público';
+      visEl.style.background = 'var(--verde-pale)';
+      visEl.style.color = 'var(--verde-esc)';
+    } else {
+      visEl.textContent = '🔒 Privado';
+      visEl.style.background = '#eef2fb';
+      visEl.style.color = 'var(--azul-med)';
+    }
+
+    document.getElementById('prev-membros').textContent =
+      membros.length > 0 ? `Você + ${membros.length}` : 'Só você';
+
+    atualizarSteps();
+  }
+
+  /* ════════════════════════
+     STEPS
+  ════════════════════════ */
+  function atualizarSteps() {
+    const nome  = document.getElementById('nome-acervo').value.trim();
+    const s1ok  = nome.length > 0;
+    const s2ok  = true; // visibilidade sempre tem valor
+    const s3ok  = membros.length > 0 || !document.getElementById('toggle-membros').checked;
+
+    setStep(1, s1ok, true);
+    setStep(2, s2ok, s1ok);
+    setStep(3, s3ok && s1ok, s1ok);
+    setStep(4, false, s1ok && s2ok);
+  }
+
+  function setStep(n, done, curr) {
+    const el  = document.getElementById(`step-${n}`);
+    const sep = document.getElementById(`sep-${n}`);
+    el.className  = 'step-item' + (done ? ' done' : curr ? ' curr' : '');
+    if (sep) sep.className = 'step-sep' + (done ? ' done' : '');
+  }
+
+  /* ════════════════════════
+     CRIAR ACERVO
+  ════════════════════════ */
+  function criarAcervo() {
+    const nome = document.getElementById('nome-acervo');
+    if (!nome.value.trim()) {
+      nome.classList.add('is-invalid');
+      nome.focus();
+      return;
+    }
+    nome.classList.remove('is-invalid');
+
+    // Aqui: POST /acervos na API Flask
+    document.getElementById('modal-nome-acervo').textContent = `"${nome.value.trim()}"`;
+    new bootstrap.Modal(document.getElementById('modalSucesso')).show();
+  }
+
+  /* ════════════════════════
+     SALVAR RASCUNHO
+  ════════════════════════ */
+  function salvarRascunho() {
+    mostrarToast('Rascunho salvo! 💾');
+  }
+
+  /* ════════════════════════
+     TOAST
+  ════════════════════════ */
+  function mostrarToast(msg) {
+    const t = document.getElementById('toast-ok');
+    document.getElementById('toast-msg').textContent = msg;
+    t.style.display = 'flex';
+    setTimeout(() => { t.style.display = 'none'; }, 3000);
+  }
+
+  /* ════════════════════════
+     SIDEBAR MOBILE
+  ════════════════════════ */
+  function abrirSidebar()  { document.getElementById('sidebar').classList.add('open'); document.getElementById('overlay').classList.add('open'); }
+  function fecharSidebar() { document.getElementById('sidebar').classList.remove('open'); document.getElementById('overlay').classList.remove('open'); }
+
+  /* Init */
+  atualizarSteps();
+</script>
+</body>
+</html>
