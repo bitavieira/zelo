@@ -893,9 +893,11 @@
      FINALIZAR CADASTRO
   ════════════════════════════════ */
   function finalizarCadastro() {
+    const nome = document.getElementById('cad-nome');
     const s1 = document.getElementById('cad-senha');
     const s2 = document.getElementById('cad-senha2');
     const ac = document.getElementById('aceito');
+    const email = document.getElementById('cad-email');
     let ok = true;
 
     if (calcForca(s1.value) < 2) { s1.classList.add('is-invalid'); ok=false; } else s1.classList.remove('is-invalid');
@@ -907,9 +909,32 @@
     }
 
     if (ok) {
-      // Simulação — aqui você chama sua API Flask
-      mostrarAlerta('alert-cad', 'success', 'Conta criada! Redirecionando…');
-      setTimeout(() => { window.location.href = 'dashboard.html'; }, 1800);
+      fetch("/api/auth/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          nome: nome.value.trim(),
+          email: email.value.trim(),
+          senha: s1.value
+        })
+      })
+      .then(response => {
+        if (!response.ok) {
+          return response.json().then(err => { throw new Error(err.error || "Erro ao criar conta"); });
+        }
+        return response.json();
+      })
+      .then(data => {
+        localStorage.setItem("token", data.token);
+        localStorage.setItem("perfil", data.usuario.perfil);
+        localStorage.setItem("nome", data.usuario.nome);
+        localStorage.setItem("email", data.usuario.email);
+        mostrarAlerta('alert-cad', 'success', 'Conta criada! Redirecionando…');
+        setTimeout(() => { window.location.href = 'dashboard.html'; }, 1000);
+      })
+      .catch(err => {
+        mostrarAlerta('alert-cad', 'danger', err.message);
+      });
     }
   }
 
@@ -925,9 +950,31 @@
     if (senha.value.length < 4)            { senha.classList.add('is-invalid'); ok=false; } else senha.classList.remove('is-invalid');
 
     if (ok) {
-      // Simulação — aqui você chama sua API Flask POST /auth/login
-      mostrarAlerta('alert-login', 'success', 'Login realizado! Redirecionando…');
-      setTimeout(() => { window.location.href = 'dashboard.html'; }, 1600);
+      fetch("/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email: email.value.trim(),
+          senha: senha.value
+        })
+      })
+      .then(response => {
+        if (!response.ok) {
+          return response.json().then(err => { throw new Error(err.error || "E-mail ou senha incorretos."); });
+        }
+        return response.json();
+      })
+      .then(data => {
+        localStorage.setItem("token", data.token);
+        localStorage.setItem("perfil", data.usuario.perfil);
+        localStorage.setItem("nome", data.usuario.nome);
+        localStorage.setItem("email", data.usuario.email);
+        mostrarAlerta('alert-login', 'success', 'Login realizado! Redirecionando…');
+        setTimeout(() => { window.location.href = 'dashboard.html'; }, 1000);
+      })
+      .catch(err => {
+        mostrarAlerta('alert-login', 'danger', err.message);
+      });
     }
   }
 
@@ -1036,6 +1083,11 @@
         <i class="bi ${icon[tipo]}"></i> ${msg}
       </div>`;
   }
+  document.addEventListener("DOMContentLoaded", () => {
+    if (window.location.hash === "#cadastro" || window.location.pathname.includes("cadastro")) {
+      switchTab("cadastro");
+    }
+  });
   </script>
 </body>
 </html>
