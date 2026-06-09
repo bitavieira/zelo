@@ -661,8 +661,9 @@
             </div>
             <div class="preview-row">
               <span class="label">Criado por</span>
-              <span class="valor">Maria Bárbara</span>
+              <span class="valor" id="prev-criador">Maria Bárbara</span>
             </div>
+
           </div>
         </div>
 
@@ -835,17 +836,58 @@
      CRIAR ACERVO
   ════════════════════════ */
   function criarAcervo() {
-    const nome = document.getElementById('nome-acervo');
-    if (!nome.value.trim()) {
-      nome.classList.add('is-invalid');
-      nome.focus();
+    const nomeEl = document.getElementById('nome-acervo');
+    const nome = nomeEl.value.trim();
+    if (!nome) {
+      nomeEl.classList.add('is-invalid');
+      nomeEl.focus();
       return;
     }
-    nome.classList.remove('is-invalid');
+    nomeEl.classList.remove('is-invalid');
 
-    // Aqui: POST /acervos na API Flask
-    document.getElementById('modal-nome-acervo').textContent = `"${nome.value.trim()}"`;
-    new bootstrap.Modal(document.getElementById('modalSucesso')).show();
+    const desc = document.getElementById('desc-acervo').value.trim();
+    const categoria = document.getElementById('categoria-acervo').value;
+    const prazo = document.getElementById('prazo-dev').value;
+    const maxLivros = document.getElementById('max-livros').value;
+    const notifAtraso = document.getElementById('notif-atraso').checked;
+    const notifDevolucao = document.getElementById('notif-devolucao').checked;
+
+    const token = localStorage.getItem("token");
+    if (!token) {
+      window.location.href = "login.html";
+      return;
+    }
+
+    fetch("/api/acervos/", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer " + token
+      },
+      body: JSON.stringify({
+        nome: nome,
+        descricao: desc,
+        visibilidade: visAtual,
+        categoria: categoria,
+        prazo_devolucao_padrao: prazo ? parseInt(prazo) : 14,
+        max_livros_por_emprestimo: maxLivros ? parseInt(maxLivros) : 3,
+        notif_atraso: notifAtraso,
+        notif_devolucao: notifDevolucao
+      })
+    })
+    .then(res => {
+      if (!res.ok) {
+        return res.json().then(err => { throw new Error(err.error || "Erro ao criar acervo."); });
+      }
+      return res.json();
+    })
+    .then(data => {
+      document.getElementById('modal-nome-acervo').textContent = `"${data.nome}"`;
+      new bootstrap.Modal(document.getElementById('modalSucesso')).show();
+    })
+    .catch(err => {
+      alert(err.message);
+    });
   }
 
   /* ════════════════════════
@@ -872,7 +914,22 @@
   function fecharSidebar() { document.getElementById('sidebar').classList.remove('open'); document.getElementById('overlay').classList.remove('open'); }
 
   /* Init */
+  const token = localStorage.getItem("token");
+  if (!token) {
+    window.location.href = "login.html";
+  }
+
+  const userNome = localStorage.getItem("nome") || "Usuário";
+  const iniciais = userNome.split(" ").map(n => n[0]).join("").substring(0, 2).toUpperCase();
+  document.querySelectorAll(".avatar-btn").forEach(e => e.textContent = iniciais);
+  
+  const prevCriador = document.getElementById("prev-criador");
+  if (prevCriador) {
+    prevCriador.textContent = userNome;
+  }
+
   atualizarSteps();
+
 </script>
 </body>
 </html>

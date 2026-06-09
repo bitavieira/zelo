@@ -14,6 +14,8 @@ db = client[Config.MONGO_DB]
 usuarios_col = db["usuarios"]
 livros_col = db["livros"]
 emprestimos_col = db["emprestimos"]
+acervos_col = db["acervos"]
+
 
 def setup_db():
     try:

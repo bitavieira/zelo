@@ -53,8 +53,12 @@ def register():
     if email_existente:
         return jsonify({"error": "Já existe um usuário cadastrado com este e-mail."}), 400
         
-    usuario_doc = criar_usuario_doc(nome, email, senha, perfil="leitor")
+    perfil = data.get("perfil", "leitor")
+    if perfil not in ["admin", "leitor"]:
+        perfil = "leitor"
+    usuario_doc = criar_usuario_doc(nome, email, senha, perfil=perfil)
     usuarios_col.insert_one(usuario_doc)
+
     
     token = gerar_token(usuario_doc["_id"], usuario_doc["perfil"])
     

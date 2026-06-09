@@ -1360,8 +1360,8 @@
         <div class="col-lg-4">
           <div class="section-card text-center">
             <div class="profile-avatar" style="width:80px;height:80px;font-size:1.8rem;margin:0 auto 1rem;">MB</div>
-            <div style="font-size:1.1rem;font-weight:900;color:var(--azul-esc);">Maria Bárbara Vieira</div>
-            <div style="font-size:.85rem;font-weight:600;color:#6b7a90;">maria@email.com</div>
+            <div class="profile-nome" style="font-size:1.1rem;font-weight:900;color:var(--azul-esc);">Maria Bárbara Vieira</div>
+            <div class="profile-email" style="font-size:.85rem;font-weight:600;color:#6b7a90;">maria@email.com</div>
             <div class="mt-3"><span class="badge-status badge-disponivel"><i class="bi bi-shield-check me-1"></i>
                 Administrador</span></div>
             <hr style="border-color:var(--cinza-in);margin:1.2rem 0;">
@@ -1378,16 +1378,17 @@
             <h6 style="font-weight:900;color:var(--azul-esc);margin-bottom:1.2rem;">Informações pessoais</h6>
             <div class="row g-3">
               <div class="col-md-6"><label class="form-label">Nome completo</label><input type="text"
-                  class="form-control" value="Maria Bárbara Vieira e Silva" /></div>
+                  class="form-control" id="perf-nome" /></div>
               <div class="col-md-6"><label class="form-label">Data de nascimento</label><input type="date"
                   class="form-control" value="1998-03-15" /></div>
               <div class="col-md-6"><label class="form-label">E-mail</label><input type="email" class="form-control"
-                  value="maria@email.com" /></div>
+                  id="perf-email" /></div>
               <div class="col-md-6"><label class="form-label">Telefone (opcional)</label><input type="text"
                   class="form-control" placeholder="(00) 00000-0000" /></div>
               <div class="col-12"><label class="form-label">Bio (opcional)</label><textarea class="form-control"
                   rows="3" placeholder="Conte um pouco sobre você e seus livros favoritos…"></textarea></div>
             </div>
+
             <div class="d-flex gap-2 mt-3">
               <button class="btn-main" onclick="mostrarToast('Perfil salvo com sucesso!')"><i
                   class="bi bi-check me-1"></i> Salvar alterações</button>
@@ -1592,8 +1593,6 @@
         document.querySelectorAll(".btn-main[data-bs-target='#modalEmprestimo']").forEach(e => e.style.display = "none");
         document.querySelectorAll(".btn-outline[data-bs-target='#modalLivro']").forEach(e => e.style.display = "none");
         document.querySelectorAll(".btn-outline[onclick*='modalEmprestimo']").forEach(e => e.style.display = "none");
-        document.querySelectorAll(".btn-outline[onclick*='criar-acervo']").forEach(e => e.style.display = "none");
-        document.querySelectorAll(".btn-main[href*='criar-acervo']").forEach(e => e.style.display = "none");
         document.querySelectorAll(".btn-outline[onclick*='atrasados']").forEach(e => e.style.display = "none");
       }
 
@@ -1614,6 +1613,12 @@
       document.querySelectorAll(".profile-nome").forEach(e => e.textContent = userNome);
       document.querySelectorAll(".profile-email").forEach(e => e.textContent = userEmail);
 
+      // Preenche os inputs de edição de perfil
+      const perfNomeInput = document.getElementById("perf-nome");
+      if (perfNomeInput) perfNomeInput.value = userNome;
+      const perfEmailInput = document.getElementById("perf-email");
+      if (perfEmailInput) perfEmailInput.value = userEmail;
+
       // Atualiza tag de perfil na aba de Perfil
       const profileBadge = document.querySelector("#view-perfil .badge-status");
       if (profileBadge) {
@@ -1627,6 +1632,7 @@
         welcomeTitle.innerHTML = `Olá, ${userNome}! 👋`;
       }
     }
+
 
     function fazerLogout() {
       localStorage.clear();
@@ -1915,6 +1921,8 @@
     function salvarEmprestimo() {
       const livroId = document.getElementById("emp-livro-select").value;
       const usuarioId = document.getElementById("emp-usuario-select").value;
+      const dataEmp = document.getElementById("data-emp").value;
+      const dataDev = document.getElementById("data-dev").value;
 
       const alertDiv = document.getElementById("alert-modal-emp");
       alertDiv.innerHTML = "";
@@ -1929,9 +1937,12 @@
         headers: authHeaders,
         body: JSON.stringify({
           livro_id: livroId,
-          usuario_id: usuarioId
+          usuario_id: usuarioId,
+          data_emprestimo: dataEmp,
+          data_devolucao_prevista: dataDev
         })
       })
+
         .then(res => {
           if (!res.ok) {
             return res.json().then(err => { throw new Error(err.error || "Erro ao registrar empréstimo"); });

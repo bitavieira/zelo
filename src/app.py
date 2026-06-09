@@ -11,6 +11,8 @@ from src.routes.livro_routes import livro_bp
 from src.routes.usuario_routes import usuario_bp
 from src.routes.emprestimo_routes import emprestimo_bp
 from src.routes.page_routes import page_bp
+from src.routes.acervo_routes import acervo_bp
+
 
 class CustomJSONProvider(DefaultJSONProvider):
     """
@@ -42,6 +44,8 @@ def create_app():
     app.register_blueprint(usuario_bp)
     app.register_blueprint(emprestimo_bp)
     app.register_blueprint(page_bp)
+    app.register_blueprint(acervo_bp)
+
 
     # Rota de status para a API
     @app.route("/api/status", methods=["GET"])

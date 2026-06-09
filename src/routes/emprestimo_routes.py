@@ -80,9 +80,36 @@ def registrar_emprestimo():
     if livro["exemplares_disponiveis"] <= 0:
         return jsonify({"error": "Não há exemplares disponíveis deste livro para empréstimo."}), 400
         
-    # Registra o empréstimo
-    emprestimo_doc = criar_emprestimo_doc(livro_id, usuario_id)
+    # Registra o empréstimo com datas opcionais
+    data_emprestimo_str = data.get("data_emprestimo")
+    data_devolucao_prevista_str = data.get("data_devolucao_prevista")
+    
+    data_emprestimo = None
+    if data_emprestimo_str:
+        try:
+            if len(data_emprestimo_str) == 10:
+                data_emprestimo_str += "T12:00:00"
+            data_emprestimo = datetime.fromisoformat(data_emprestimo_str).replace(tzinfo=timezone.utc)
+        except ValueError:
+            pass
+            
+    data_devolucao_prevista = None
+    if data_devolucao_prevista_str:
+        try:
+            if len(data_devolucao_prevista_str) == 10:
+                data_devolucao_prevista_str += "T12:00:00"
+            data_devolucao_prevista = datetime.fromisoformat(data_devolucao_prevista_str).replace(tzinfo=timezone.utc)
+        except ValueError:
+            pass
+
+    emprestimo_doc = criar_emprestimo_doc(
+        livro_id, 
+        usuario_id, 
+        data_emprestimo=data_emprestimo, 
+        data_devolucao_prevista=data_devolucao_prevista
+    )
     emprestimos_col.insert_one(emprestimo_doc)
+
     
     # Decrementa exemplares disponíveis
     livros_col.update_one(

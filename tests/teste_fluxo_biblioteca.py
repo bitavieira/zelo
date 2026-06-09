@@ -280,5 +280,43 @@ class TestBibliotecaREST(unittest.TestCase):
         self.assertEqual(res.json[0]["status"], "atrasado")
         self.assertEqual(res.json[0]["livro"]["titulo"], "Livro Atrasado")
 
+    def test_acervo_crud(self):
+        # 1. Cria usuário leitor e obtém token
+        res_user = self.client.post("/api/usuarios/", json={
+            "nome": "Leitor Acervo",
+            "email": "leitor_acervo@teste.com",
+            "senha": "senha123",
+            "perfil": "leitor"
+        }, headers={"Authorization": f"Bearer {self.get_admin_token()}"})
+        self.assertEqual(res_user.status_code, 201)
+        
+        # Faz login do leitor
+        res_login = self.client.post("/api/auth/login", json={
+            "email": "leitor_acervo@teste.com",
+            "senha": "senha123"
+        })
+        token_leitor = res_login.json["token"]
+        headers_leitor = {"Authorization": f"Bearer {token_leitor}"}
+        
+        # 2. Cria acervo para o leitor
+        res = self.client.post("/api/acervos/", json={
+            "nome": "Meu Acervo Tematico",
+            "descricao": "Um acervo para testes",
+            "visibilidade": "publico"
+        }, headers=headers_leitor)
+        self.assertEqual(res.status_code, 201)
+        self.assertEqual(res.json["nome"], "Meu Acervo Tematico")
+        self.assertEqual(res.json["descricao"], "Um acervo para testes")
+        self.assertEqual(res.json["visibilidade"], "publico")
+        
+        acervo_id = res.json["id"]
+        
+        # 3. Lista acervos do leitor
+        res_list = self.client.get("/api/acervos/", headers=headers_leitor)
+        self.assertEqual(res_list.status_code, 200)
+        self.assertEqual(len(res_list.json), 1)
+        self.assertEqual(res_list.json[0]["id"], acervo_id)
+
 if __name__ == "__main__":
     unittest.main()
+
