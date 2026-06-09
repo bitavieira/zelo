@@ -1,0 +1,1092 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Zelo — Entrar</title>
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet" />
+
+  <style>
+    :root {
+      --verde:     #2DBE6C;
+      --verde-esc: #1e9e56;
+      --azul-esc:  #0d1f40;
+      --cinza-bg:  #f0f3f7;
+      --cinza-in:  #e8ecf2;
+      --erro:      #dc3545;
+      --aviso:     #ffc107;
+    }
+
+    * { font-family: 'Nunito', sans-serif; box-sizing: border-box; }
+
+    /* ── Layout geral ── */
+    body {
+      background-color: var(--cinza-bg);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ── Painel central ── */
+    .auth-wrapper {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem 1rem;
+    }
+
+    .auth-card {
+      background: #fff;
+      border-radius: 24px;
+      box-shadow: 0 8px 40px rgba(13,31,64,.12);
+      width: 100%;
+      max-width: 440px;
+      padding: 2.5rem 2.4rem;
+      animation: slideUp .35s ease;
+    }
+
+    @keyframes slideUp {
+      from { opacity:0; transform:translateY(18px); }
+      to   { opacity:1; transform:translateY(0); }
+    }
+
+    /* ── Logo topo ── */
+    .logo-top {
+      display: flex;
+      align-items: center;
+      gap: .6rem;
+      justify-content: center;
+      margin-bottom: 1.8rem;
+      text-decoration: none;
+    }
+    .logo-top span {
+      font-size: 1.7rem;
+      font-weight: 900;
+      color: var(--azul-esc);
+      letter-spacing: -1px;
+    }
+
+    /* ── Título da tela ── */
+    .screen-title {
+      font-size: 1.45rem;
+      font-weight: 900;
+      color: var(--azul-esc);
+      margin-bottom: .3rem;
+    }
+    .screen-sub {
+      font-size: .88rem;
+      color: #6b7a90;
+      font-weight: 600;
+      margin-bottom: 1.6rem;
+    }
+
+    /* ── Abas Login / Cadastro ── */
+    .tab-bar {
+      display: flex;
+      background: var(--cinza-in);
+      border-radius: 50px;
+      padding: 4px;
+      margin-bottom: 1.8rem;
+    }
+    .tab-btn {
+      flex: 1;
+      border: none;
+      background: transparent;
+      border-radius: 50px;
+      padding: .5rem;
+      font-size: .92rem;
+      font-weight: 700;
+      color: #6b7a90;
+      cursor: pointer;
+      transition: all .2s;
+    }
+    .tab-btn.active {
+      background: var(--azul-esc);
+      color: #fff;
+      box-shadow: 0 2px 8px rgba(13,31,64,.2);
+    }
+
+    /* ── Inputs ── */
+    .form-label {
+      font-weight: 700;
+      font-size: .85rem;
+      color: var(--azul-esc);
+      margin-bottom: .3rem;
+    }
+    .form-control {
+      background: var(--cinza-in);
+      border: 2px solid transparent;
+      border-radius: 12px;
+      padding: .65rem 1rem;
+      font-size: .95rem;
+      font-weight: 600;
+      color: var(--azul-esc);
+      transition: border-color .2s, background .2s;
+    }
+    .form-control:focus {
+      background: #fff;
+      border-color: var(--verde);
+      box-shadow: 0 0 0 3px rgba(45,190,108,.12);
+    }
+    .form-control.is-invalid {
+      border-color: var(--erro);
+      background: #fff5f5;
+    }
+    .invalid-feedback { font-weight: 700; font-size: .8rem; }
+
+    /* input com ícone de olho */
+    .input-eye { position: relative; }
+    .input-eye .form-control { padding-right: 2.8rem; }
+    .btn-eye {
+      position: absolute;
+      right: .8rem;
+      top: 50%;
+      transform: translateY(-50%);
+      border: none;
+      background: transparent;
+      color: #9aaabf;
+      font-size: 1.05rem;
+      cursor: pointer;
+      padding: 0;
+      line-height: 1;
+    }
+    .btn-eye:hover { color: var(--azul-esc); }
+
+    /* ── Força de senha ── */
+    .strength-bar {
+      height: 5px;
+      border-radius: 4px;
+      background: var(--cinza-in);
+      margin-top: .4rem;
+      overflow: hidden;
+    }
+    .strength-fill {
+      height: 100%;
+      border-radius: 4px;
+      width: 0%;
+      transition: width .3s, background .3s;
+    }
+    .strength-label {
+      font-size: .75rem;
+      font-weight: 700;
+      margin-top: .2rem;
+      color: #9aaabf;
+    }
+
+    /* ── Checkbox ── */
+    .form-check-input:checked { background-color: var(--verde); border-color: var(--verde); }
+    .form-check-label { font-size: .88rem; font-weight: 600; color: #5a6a7e; }
+
+    /* ── Links auxiliares ── */
+    .link-aux {
+      font-size: .83rem;
+      font-weight: 700;
+      color: var(--azul-esc);
+      text-decoration: none;
+      cursor: pointer;
+    }
+    .link-aux:hover { color: var(--verde); text-decoration: underline; }
+
+    /* ── Botão principal ── */
+    .btn-main {
+      width: 100%;
+      background: var(--verde);
+      color: #fff;
+      font-weight: 800;
+      font-size: 1rem;
+      border: none;
+      border-radius: 50px;
+      padding: .75rem;
+      transition: background .2s, transform .1s;
+      margin-top: .5rem;
+    }
+    .btn-main:hover  { background: var(--verde-esc); color: #fff; }
+    .btn-main:active { transform: scale(.98); }
+    .btn-main:disabled { background: #a8dfc9; cursor: not-allowed; }
+
+    /* ── Divisor ── */
+    .divider {
+      display: flex;
+      align-items: center;
+      gap: .8rem;
+      margin: 1.2rem 0;
+    }
+    .divider::before, .divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--cinza-in);
+    }
+    .divider span { font-size: .8rem; color: #9aaabf; font-weight: 700; white-space: nowrap; }
+
+    /* ── Alert de feedback ── */
+    .alert-feedback {
+      border-radius: 12px;
+      font-weight: 700;
+      font-size: .88rem;
+      padding: .75rem 1rem;
+      display: flex;
+      align-items: center;
+      gap: .5rem;
+    }
+
+    /* ── Ícone de sucesso grande ── */
+    .success-icon {
+      width: 72px;
+      height: 72px;
+      background: rgba(45,190,108,.15);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2rem;
+      color: var(--verde);
+      margin: 0 auto 1.2rem;
+    }
+
+    /* ── Passos (stepper) ── */
+    .stepper {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: .4rem;
+      margin-bottom: 1.6rem;
+    }
+    .step-dot {
+      width: 10px; height: 10px;
+      border-radius: 50%;
+      background: var(--cinza-in);
+      transition: background .3s, transform .3s;
+    }
+    .step-dot.active { background: var(--verde); transform: scale(1.3); }
+    .step-dot.done   { background: var(--azul-esc); }
+
+    /* ── Termos ── */
+    .terms-text {
+      font-size: .78rem;
+      color: #9aaabf;
+      font-weight: 600;
+      text-align: center;
+      margin-top: 1rem;
+    }
+    .terms-text a { color: var(--azul-esc); font-weight: 700; text-decoration: none; }
+    .terms-text a:hover { color: var(--verde); }
+
+    /* ── Voltar link ── */
+    .back-link {
+      display: flex;
+      align-items: center;
+      gap: .3rem;
+      color: #6b7a90;
+      font-size: .85rem;
+      font-weight: 700;
+      cursor: pointer;
+      text-decoration: none;
+      margin-bottom: 1.4rem;
+    }
+    .back-link:hover { color: var(--azul-esc); }
+
+    /* ── Rodapé ── */
+    footer {
+      background: var(--azul-esc);
+      color: rgba(255,255,255,.55);
+      font-size: .8rem;
+      padding: .9rem 0;
+      text-align: center;
+    }
+    footer span { color: var(--verde); font-weight: 700; }
+
+    /* ── Telas (show/hide) ── */
+    .screen { display: none; }
+    .screen.active { display: block; animation: slideUp .3s ease; }
+
+    /* ── Navbar mínima ── */
+    .top-bar {
+      background: #a8dfc9;
+      padding: .7rem 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .top-bar a {
+      font-size: .85rem;
+      font-weight: 700;
+      color: var(--azul-esc);
+      text-decoration: none;
+    }
+    .top-bar a:hover { color: var(--verde-esc); }
+  </style>
+</head>
+<body>
+
+  <!-- ── Top bar ── -->
+  <div class="top-bar">
+    <a href="index.html">
+      <i class="bi bi-arrow-left me-1"></i> Voltar ao início
+    </a>
+    <a href="index.html" style="font-weight:900;font-size:1.1rem;letter-spacing:-1px;">zelo</a>
+  </div>
+
+  <!-- ════════════════════════════════════════
+       PAINEL DE AUTENTICAÇÃO
+  ════════════════════════════════════════ -->
+  <div class="auth-wrapper">
+    <div class="auth-card">
+
+      <!-- Logo -->
+      <a class="logo-top" href="index.html">
+        <svg width="36" height="36" viewBox="0 0 80 80" fill="none">
+          <rect x="8" y="52" width="64" height="5" rx="2.5" fill="#0d1f40"/>
+          <rect x="14" y="28" width="10" height="24" rx="2" fill="#1a4fbf"/>
+          <rect x="26" y="22" width="10" height="30" rx="2" fill="#2DBE6C"/>
+          <rect x="38" y="30" width="8"  height="22" rx="2" fill="#0d1f40"/>
+          <rect x="48" y="26" width="10" height="26" rx="2" fill="#2DBE6C" opacity=".7"/>
+          <path d="M22 64 Q40 74 58 64" stroke="#2DBE6C" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+          <circle cx="22" cy="64" r="3" fill="#2DBE6C"/>
+          <circle cx="58" cy="64" r="3" fill="#2DBE6C"/>
+        </svg>
+        <span>zelo</span>
+      </a>
+
+      <!-- ══════════════════════════
+           TELA 1 — LOGIN / CADASTRO
+      ══════════════════════════ -->
+      <div id="screen-auth" class="screen active">
+
+        <!-- Abas -->
+        <div class="tab-bar" id="tabBar">
+          <button class="tab-btn active" onclick="switchTab('login')">Entrar</button>
+          <button class="tab-btn" onclick="switchTab('cadastro')">Criar conta</button>
+        </div>
+
+        <!-- ── FORMULÁRIO DE LOGIN ── -->
+        <div id="form-login">
+          <p class="screen-title">Bem-vindo de volta!</p>
+          <p class="screen-sub">Entre na sua conta para gerenciar seu acervo.</p>
+
+          <div id="alert-login"></div>
+
+          <div class="mb-3">
+            <label class="form-label">E-mail</label>
+            <input type="email" id="login-email" class="form-control" placeholder="seu@email.com" />
+            <div class="invalid-feedback">Por favor, insira um e-mail válido.</div>
+          </div>
+
+          <div class="mb-1">
+            <label class="form-label">Senha</label>
+            <div class="input-eye">
+              <input type="password" id="login-senha" class="form-control" placeholder="••••••••" />
+              <button class="btn-eye" onclick="toggleSenha('login-senha', this)">
+                <i class="bi bi-eye"></i>
+              </button>
+            </div>
+            <div class="invalid-feedback">Senha incorreta.</div>
+          </div>
+
+          <div class="d-flex justify-content-between align-items-center mt-2 mb-3">
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" id="lembrar" />
+              <label class="form-check-label" for="lembrar">Lembrar de mim</label>
+            </div>
+            <a class="link-aux" onclick="goTo('screen-esq-senha')">Esqueci minha senha</a>
+          </div>
+
+          <button class="btn btn-main" onclick="fazerLogin()">
+            <i class="bi bi-box-arrow-in-right me-1"></i> Entrar
+          </button>
+
+          <div class="divider"><span>ou</span></div>
+
+          <div class="text-center" style="font-size:.85rem;font-weight:700;color:#6b7a90;">
+            Não tem conta?
+            <a class="link-aux ms-1" onclick="switchTab('cadastro')">Criar conta grátis</a>
+          </div>
+
+          <div class="text-center mt-2">
+            <a class="link-aux" style="font-size:.8rem;color:#9aaabf;" onclick="goTo('screen-esq-email')">
+              <i class="bi bi-question-circle me-1"></i>Esqueci meu e-mail de cadastro
+            </a>
+          </div>
+        </div>
+
+        <!-- ── FORMULÁRIO DE CADASTRO ── -->
+        <div id="form-cadastro" style="display:none;">
+          <p class="screen-title">Crie sua conta</p>
+          <p class="screen-sub">É rápido e gratuito. Comece a organizar agora!</p>
+
+          <div id="alert-cad"></div>
+
+          <!-- Stepper -->
+          <div class="stepper" id="stepper">
+            <div class="step-dot active" id="dot-0"></div>
+            <div class="step-dot" id="dot-1"></div>
+            <div class="step-dot" id="dot-2"></div>
+          </div>
+
+          <!-- Passo 1 — dados pessoais -->
+          <div id="cad-step-0">
+            <div class="mb-3">
+              <label class="form-label">Nome completo</label>
+              <input type="text" id="cad-nome" class="form-control" placeholder="Seu nome" />
+              <div class="invalid-feedback">Informe seu nome completo.</div>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Data de nascimento</label>
+              <input type="date" id="cad-nasc" class="form-control" />
+              <div class="invalid-feedback">Informe sua data de nascimento.</div>
+            </div>
+            <button class="btn btn-main" onclick="cadProximo(0)">Próximo <i class="bi bi-arrow-right ms-1"></i></button>
+          </div>
+
+          <!-- Passo 2 — e-mail -->
+          <div id="cad-step-1" style="display:none;">
+            <div class="mb-3">
+              <label class="form-label">E-mail</label>
+              <input type="email" id="cad-email" class="form-control" placeholder="seu@email.com" />
+              <div class="invalid-feedback">E-mail inválido.</div>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Confirmar e-mail</label>
+              <input type="email" id="cad-email2" class="form-control" placeholder="repita o e-mail" />
+              <div class="invalid-feedback">Os e-mails não conferem.</div>
+            </div>
+            <button class="btn btn-main" onclick="cadProximo(1)">Próximo <i class="bi bi-arrow-right ms-1"></i></button>
+            <div class="text-center mt-2">
+              <a class="link-aux" style="font-size:.82rem;color:#9aaabf;" onclick="cadVoltar(1)">
+                <i class="bi bi-arrow-left"></i> Voltar
+              </a>
+            </div>
+          </div>
+
+          <!-- Passo 3 — senha -->
+          <div id="cad-step-2" style="display:none;">
+            <div class="mb-2">
+              <label class="form-label">Senha</label>
+              <div class="input-eye">
+                <input type="password" id="cad-senha" class="form-control" placeholder="Mín. 8 caracteres" oninput="atualizarForca()" />
+                <button class="btn-eye" onclick="toggleSenha('cad-senha', this)"><i class="bi bi-eye"></i></button>
+              </div>
+              <div class="strength-bar"><div class="strength-fill" id="strength-fill"></div></div>
+              <div class="strength-label" id="strength-label">— Digite a senha para ver a força</div>
+              <div class="invalid-feedback">Senha fraca. Use letras, números e símbolos.</div>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Confirmar senha</label>
+              <div class="input-eye">
+                <input type="password" id="cad-senha2" class="form-control" placeholder="••••••••" />
+                <button class="btn-eye" onclick="toggleSenha('cad-senha2', this)"><i class="bi bi-eye"></i></button>
+              </div>
+              <div class="invalid-feedback">As senhas não conferem.</div>
+            </div>
+            <div class="mb-3">
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="aceito" />
+                <label class="form-check-label" for="aceito">
+                  Li e aceito os <a href="#" class="link-aux">Termos de Uso</a> e a
+                  <a href="#" class="link-aux">Política de Privacidade</a>
+                </label>
+              </div>
+            </div>
+            <button class="btn btn-main" onclick="finalizarCadastro()">
+              <i class="bi bi-check-circle me-1"></i> Criar minha conta
+            </button>
+            <div class="text-center mt-2">
+              <a class="link-aux" style="font-size:.82rem;color:#9aaabf;" onclick="cadVoltar(2)">
+                <i class="bi bi-arrow-left"></i> Voltar
+              </a>
+            </div>
+          </div>
+
+        </div><!-- /form-cadastro -->
+      </div><!-- /screen-auth -->
+
+
+      <!-- ══════════════════════════
+           TELA 2 — ESQUECI SENHA
+      ══════════════════════════ -->
+      <div id="screen-esq-senha" class="screen">
+        <a class="back-link" onclick="goTo('screen-auth')">
+          <i class="bi bi-arrow-left"></i> Voltar ao login
+        </a>
+        <div class="success-icon mb-0" style="background:rgba(13,31,64,.08);color:var(--azul-esc);margin-bottom:.8rem!important;">
+          <i class="bi bi-lock"></i>
+        </div>
+        <p class="screen-title text-center">Esqueci minha senha</p>
+        <p class="screen-sub text-center">
+          Informe seu e-mail cadastrado. Enviaremos um link para você criar uma nova senha.
+        </p>
+
+        <div id="alert-esq-senha"></div>
+
+        <div class="mb-3">
+          <label class="form-label">E-mail cadastrado</label>
+          <input type="email" id="esq-senha-email" class="form-control" placeholder="seu@email.com" />
+          <div class="invalid-feedback">E-mail inválido.</div>
+        </div>
+
+        <button class="btn btn-main" onclick="enviarRecupSenha()">
+          <i class="bi bi-send me-1"></i> Enviar link de recuperação
+        </button>
+
+        <div class="text-center mt-3">
+          <a class="link-aux" style="font-size:.82rem;color:#9aaabf;" onclick="goTo('screen-esq-email')">
+            Não lembro meu e-mail
+          </a>
+        </div>
+      </div>
+
+
+      <!-- ══════════════════════════
+           TELA 3 — ESQUECI E-MAIL
+      ══════════════════════════ -->
+      <div id="screen-esq-email" class="screen">
+        <a class="back-link" onclick="goTo('screen-auth')">
+          <i class="bi bi-arrow-left"></i> Voltar ao login
+        </a>
+        <div class="success-icon mb-0" style="background:rgba(13,31,64,.08);color:var(--azul-esc);margin-bottom:.8rem!important;">
+          <i class="bi bi-envelope-slash"></i>
+        </div>
+        <p class="screen-title text-center">Esqueci meu e-mail</p>
+        <p class="screen-sub text-center">
+          Informe seu nome completo e CPF para identificarmos sua conta.
+        </p>
+
+        <div id="alert-esq-email"></div>
+
+        <div class="mb-3">
+          <label class="form-label">Nome completo</label>
+          <input type="text" id="esq-email-nome" class="form-control" placeholder="Como você se cadastrou" />
+          <div class="invalid-feedback">Preencha seu nome.</div>
+        </div>
+        <div class="mb-3">
+          <label class="form-label">CPF</label>
+          <input type="text" id="esq-email-cpf" class="form-control" placeholder="000.000.000-00"
+            oninput="mascaraCPF(this)" maxlength="14" />
+          <div class="invalid-feedback">CPF inválido.</div>
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Data de nascimento</label>
+          <input type="date" id="esq-email-nasc" class="form-control" />
+          <div class="invalid-feedback">Informe sua data de nascimento.</div>
+        </div>
+
+        <button class="btn btn-main" onclick="buscarEmail()">
+          <i class="bi bi-search me-1"></i> Localizar minha conta
+        </button>
+      </div>
+
+
+      <!-- ══════════════════════════
+           TELA 4 — REDEFINIR SENHA
+      ══════════════════════════ -->
+      <div id="screen-redef-senha" class="screen">
+        <a class="back-link" onclick="goTo('screen-auth')">
+          <i class="bi bi-arrow-left"></i> Voltar ao login
+        </a>
+        <div class="success-icon mb-0" style="background:rgba(13,31,64,.08);color:var(--azul-esc);margin-bottom:.8rem!important;">
+          <i class="bi bi-key"></i>
+        </div>
+        <p class="screen-title text-center">Redefinir senha</p>
+        <p class="screen-sub text-center">Crie uma nova senha segura para sua conta.</p>
+
+        <div id="alert-redef-senha"></div>
+
+        <div class="mb-2">
+          <label class="form-label">Nova senha</label>
+          <div class="input-eye">
+            <input type="password" id="nova-senha" class="form-control" placeholder="Mín. 8 caracteres"
+              oninput="atualizarForca2()" />
+            <button class="btn-eye" onclick="toggleSenha('nova-senha', this)"><i class="bi bi-eye"></i></button>
+          </div>
+          <div class="strength-bar"><div class="strength-fill" id="strength-fill2"></div></div>
+          <div class="strength-label" id="strength-label2">— Digite a senha para ver a força</div>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">Confirmar nova senha</label>
+          <div class="input-eye">
+            <input type="password" id="nova-senha2" class="form-control" placeholder="••••••••" />
+            <button class="btn-eye" onclick="toggleSenha('nova-senha2', this)"><i class="bi bi-eye"></i></button>
+          </div>
+          <div class="invalid-feedback">As senhas não conferem.</div>
+        </div>
+
+        <!-- Requisitos de senha -->
+        <div class="mb-3 p-3" style="background:var(--cinza-in);border-radius:12px;">
+          <p style="font-size:.8rem;font-weight:700;color:var(--azul-esc);margin-bottom:.5rem;">
+            Sua senha deve ter:
+          </p>
+          <ul style="list-style:none;padding:0;margin:0;font-size:.8rem;font-weight:600;color:#6b7a90;">
+            <li id="req-len"><i class="bi bi-x-circle me-1" style="color:#dc3545;"></i> Mínimo 8 caracteres</li>
+            <li id="req-mai"><i class="bi bi-x-circle me-1" style="color:#dc3545;"></i> Uma letra maiúscula</li>
+            <li id="req-num"><i class="bi bi-x-circle me-1" style="color:#dc3545;"></i> Um número</li>
+            <li id="req-sim"><i class="bi bi-x-circle me-1" style="color:#dc3545;"></i> Um símbolo (!@#$...)</li>
+          </ul>
+        </div>
+
+        <button class="btn btn-main" onclick="redefinirSenha()">
+          <i class="bi bi-check-circle me-1"></i> Salvar nova senha
+        </button>
+      </div>
+
+
+      <!-- ══════════════════════════
+           TELA 5 — REDEFINIR E-MAIL
+      ══════════════════════════ -->
+      <div id="screen-redef-email" class="screen">
+        <a class="back-link" onclick="goTo('screen-auth')">
+          <i class="bi bi-arrow-left"></i> Voltar ao login
+        </a>
+        <div class="success-icon mb-0" style="background:rgba(13,31,64,.08);color:var(--azul-esc);margin-bottom:.8rem!important;">
+          <i class="bi bi-envelope-check"></i>
+        </div>
+        <p class="screen-title text-center">Redefinir e-mail</p>
+        <p class="screen-sub text-center">Insira o novo e-mail e confirme sua senha atual para alterar.</p>
+
+        <div id="alert-redef-email"></div>
+
+        <div class="mb-3">
+          <label class="form-label">Novo e-mail</label>
+          <input type="email" id="novo-email" class="form-control" placeholder="novo@email.com" />
+          <div class="invalid-feedback">E-mail inválido.</div>
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Confirmar novo e-mail</label>
+          <input type="email" id="novo-email2" class="form-control" placeholder="repita o novo e-mail" />
+          <div class="invalid-feedback">Os e-mails não conferem.</div>
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Senha atual (para confirmar)</label>
+          <div class="input-eye">
+            <input type="password" id="redef-email-senha" class="form-control" placeholder="••••••••" />
+            <button class="btn-eye" onclick="toggleSenha('redef-email-senha', this)"><i class="bi bi-eye"></i></button>
+          </div>
+          <div class="invalid-feedback">Senha incorreta.</div>
+        </div>
+
+        <button class="btn btn-main" onclick="redefinirEmail()">
+          <i class="bi bi-check-circle me-1"></i> Salvar novo e-mail
+        </button>
+      </div>
+
+
+      <!-- ══════════════════════════
+           TELA 6 — E-MAIL ENVIADO
+      ══════════════════════════ -->
+      <div id="screen-email-enviado" class="screen">
+        <div class="text-center">
+          <div class="success-icon">
+            <i class="bi bi-envelope-check-fill"></i>
+          </div>
+          <p class="screen-title">E-mail enviado!</p>
+          <p class="screen-sub">
+            Verifique sua caixa de entrada (e a pasta de spam) e siga as instruções para continuar.
+          </p>
+          <div class="alert alert-feedback alert-warning" role="alert">
+            <i class="bi bi-clock me-1"></i>
+            O link expira em <strong>30 minutos</strong>.
+          </div>
+          <button class="btn btn-main mt-2" onclick="goTo('screen-auth')">
+            <i class="bi bi-arrow-left me-1"></i> Voltar ao login
+          </button>
+          <div class="text-center mt-3">
+            <a class="link-aux" style="font-size:.82rem;color:#9aaabf;" id="btn-reenviar" onclick="reenviarEmail()">
+              Não recebeu? Reenviar e-mail
+            </a>
+          </div>
+        </div>
+      </div>
+
+
+      <!-- ══════════════════════════
+           TELA 7 — CONTA ENCONTRADA (esqueci email)
+      ══════════════════════════ -->
+      <div id="screen-conta-encontrada" class="screen">
+        <a class="back-link" onclick="goTo('screen-auth')">
+          <i class="bi bi-arrow-left"></i> Voltar ao login
+        </a>
+        <div class="text-center">
+          <div class="success-icon">
+            <i class="bi bi-person-check-fill"></i>
+          </div>
+          <p class="screen-title">Conta encontrada!</p>
+          <p class="screen-sub">
+            Encontramos uma conta associada a esses dados.<br>
+            Seu e-mail (parcialmente ocultado) é:
+          </p>
+          <div class="p-3 mb-3" style="background:var(--cinza-in);border-radius:14px;">
+            <span style="font-size:1.15rem;font-weight:800;color:var(--azul-esc);">
+              ze***@gmail.com
+            </span>
+          </div>
+          <p style="font-size:.85rem;font-weight:600;color:#6b7a90;">
+            Caso não reconheça, entre em contato com o suporte.
+          </p>
+          <button class="btn btn-main" onclick="goTo('screen-auth')">
+            <i class="bi bi-box-arrow-in-right me-1"></i> Ir para o login
+          </button>
+          <div class="mt-2">
+            <a class="link-aux" style="font-size:.82rem;" onclick="goTo('screen-redef-email')">
+              Quero alterar meu e-mail
+            </a>
+          </div>
+        </div>
+      </div>
+
+
+      <!-- ══════════════════════════
+           TELA 8 — SUCESSO (senha/email redefinido)
+      ══════════════════════════ -->
+      <div id="screen-sucesso" class="screen">
+        <div class="text-center">
+          <div class="success-icon">
+            <i class="bi bi-check-circle-fill"></i>
+          </div>
+          <p class="screen-title" id="sucesso-titulo">Senha redefinida!</p>
+          <p class="screen-sub" id="sucesso-sub">
+            Sua senha foi alterada com sucesso. Agora você pode entrar com a nova senha.
+          </p>
+          <button class="btn btn-main" onclick="goTo('screen-auth')">
+            <i class="bi bi-box-arrow-in-right me-1"></i> Ir para o login
+          </button>
+        </div>
+      </div>
+
+    </div><!-- /auth-card -->
+  </div><!-- /auth-wrapper -->
+
+  <footer>
+    &copy; 2026 <span>Zelo</span> — Compartilhe sem perder o controle.
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+  /* ════════════════════════════════
+     NAVEGAÇÃO ENTRE TELAS
+  ════════════════════════════════ */
+  function goTo(screenId) {
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    document.getElementById(screenId).classList.add('active');
+  }
+
+  /* ════════════════════════════════
+     ABAS LOGIN / CADASTRO
+  ════════════════════════════════ */
+  function switchTab(tab) {
+    const btns = document.querySelectorAll('#tabBar .tab-btn');
+    btns.forEach(b => b.classList.remove('active'));
+
+    if (tab === 'login') {
+      btns[0].classList.add('active');
+      document.getElementById('form-login').style.display = 'block';
+      document.getElementById('form-cadastro').style.display = 'none';
+    } else {
+      btns[1].classList.add('active');
+      document.getElementById('form-login').style.display = 'none';
+      document.getElementById('form-cadastro').style.display = 'block';
+      mostrarStep(0);
+    }
+  }
+
+  /* ════════════════════════════════
+     MOSTRAR / OCULTAR SENHA
+  ════════════════════════════════ */
+  function toggleSenha(inputId, btn) {
+    const inp = document.getElementById(inputId);
+    const icon = btn.querySelector('i');
+    if (inp.type === 'password') {
+      inp.type = 'text';
+      icon.className = 'bi bi-eye-slash';
+    } else {
+      inp.type = 'password';
+      icon.className = 'bi bi-eye';
+    }
+  }
+
+  /* ════════════════════════════════
+     FORÇA DE SENHA
+  ════════════════════════════════ */
+  function calcForca(senha) {
+    let pts = 0;
+    if (senha.length >= 8)         pts++;
+    if (/[A-Z]/.test(senha))       pts++;
+    if (/[0-9]/.test(senha))       pts++;
+    if (/[^a-zA-Z0-9]/.test(senha)) pts++;
+    return pts;
+  }
+
+  function aplicarForca(senha, fillId, labelId) {
+    const fill  = document.getElementById(fillId);
+    const label = document.getElementById(labelId);
+    const pts   = calcForca(senha);
+    const mapa  = [
+      { pct:'25%', cor:'#dc3545', txt:'Muito fraca' },
+      { pct:'50%', cor:'#fd7e14', txt:'Fraca' },
+      { pct:'75%', cor:'#ffc107', txt:'Média' },
+      { pct:'100%',cor:'#2DBE6C', txt:'Forte 🔒' },
+    ];
+    const m = mapa[pts - 1] || { pct:'0%', cor:'#e8ecf2', txt:'— Digite a senha' };
+    fill.style.width      = m.pct;
+    fill.style.background = m.cor;
+    label.textContent     = m.txt;
+    label.style.color     = m.cor;
+  }
+
+  function atualizarForca()  { aplicarForca(document.getElementById('cad-senha').value,  'strength-fill',  'strength-label');  atualizarReqs(); }
+  function atualizarForca2() { aplicarForca(document.getElementById('nova-senha').value, 'strength-fill2', 'strength-label2'); atualizarReqs(); }
+
+  function atualizarReqs() {
+    const s = (document.getElementById('nova-senha') || document.getElementById('cad-senha')).value;
+    setReq('req-len', s.length >= 8);
+    setReq('req-mai', /[A-Z]/.test(s));
+    setReq('req-num', /[0-9]/.test(s));
+    setReq('req-sim', /[^a-zA-Z0-9]/.test(s));
+  }
+  function setReq(id, ok) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.innerHTML = ok
+      ? `<i class="bi bi-check-circle-fill me-1" style="color:#2DBE6C;"></i> ${el.innerText.replace(/.*? /,'')}`
+      : `<i class="bi bi-x-circle me-1" style="color:#dc3545;"></i> ${el.innerText.replace(/.*? /,'')}`;
+  }
+
+  /* ════════════════════════════════
+     STEPPER DE CADASTRO
+  ════════════════════════════════ */
+  function mostrarStep(n) {
+    [0,1,2].forEach(i => {
+      document.getElementById(`cad-step-${i}`).style.display = i === n ? 'block' : 'none';
+      const dot = document.getElementById(`dot-${i}`);
+      dot.classList.remove('active','done');
+      if (i < n)  dot.classList.add('done');
+      if (i === n) dot.classList.add('active');
+    });
+  }
+
+  function cadProximo(step) {
+    if (step === 0) {
+      const nome = document.getElementById('cad-nome');
+      const nasc = document.getElementById('cad-nasc');
+      let ok = true;
+      if (!nome.value.trim() || nome.value.trim().split(' ').length < 2) { nome.classList.add('is-invalid'); ok=false; } else nome.classList.remove('is-invalid');
+      if (!nasc.value) { nasc.classList.add('is-invalid'); ok=false; } else nasc.classList.remove('is-invalid');
+      if (ok) mostrarStep(1);
+    } else if (step === 1) {
+      const e1 = document.getElementById('cad-email');
+      const e2 = document.getElementById('cad-email2');
+      let ok = true;
+      if (!/\S+@\S+\.\S+/.test(e1.value)) { e1.classList.add('is-invalid'); ok=false; } else e1.classList.remove('is-invalid');
+      if (e2.value !== e1.value) { e2.classList.add('is-invalid'); ok=false; } else e2.classList.remove('is-invalid');
+      if (ok) mostrarStep(2);
+    }
+  }
+
+  function cadVoltar(step) {
+    mostrarStep(step - 1);
+  }
+
+  /* ════════════════════════════════
+     FINALIZAR CADASTRO
+  ════════════════════════════════ */
+  function finalizarCadastro() {
+    const s1 = document.getElementById('cad-senha');
+    const s2 = document.getElementById('cad-senha2');
+    const ac = document.getElementById('aceito');
+    let ok = true;
+
+    if (calcForca(s1.value) < 2) { s1.classList.add('is-invalid'); ok=false; } else s1.classList.remove('is-invalid');
+    if (s2.value !== s1.value)   { s2.classList.add('is-invalid'); ok=false; } else s2.classList.remove('is-invalid');
+
+    if (!ac.checked) {
+      mostrarAlerta('alert-cad', 'warning', 'Você precisa aceitar os Termos de Uso para continuar.');
+      ok = false;
+    }
+
+    if (ok) {
+      const nome  = document.getElementById('cad-nome').value.trim();
+      const nasc  = document.getElementById('cad-nasc').value;
+      const email = document.getElementById('cad-email').value.trim();
+
+      const btnCad = document.querySelector('#form-cadastro .btn-main');
+      if (btnCad) { btnCad.disabled = true; btnCad.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Criando conta…'; }
+
+      fetch('/auth/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ nome, email, senha: s1.value, data_nascimento: nasc })
+      })
+      .then(r => r.json().then(data => ({ status: r.status, data })))
+      .then(({ status, data }) => {
+        if (status === 201 || status === 200) {
+          if (data.token || data.access_token) {
+            localStorage.setItem('zelo_token', data.token || data.access_token);
+            localStorage.setItem('zelo_user', JSON.stringify(data.user || data.usuario || {}));
+          }
+          mostrarAlerta('alert-cad', 'success', 'Conta criada! Redirecionando…');
+          setTimeout(() => { window.location.href = 'dashboard.html'; }, 1800);
+        } else {
+          mostrarAlerta('alert-cad', 'danger', data.message || data.erro || data.msg || 'Erro ao criar conta. Tente novamente.');
+          if (btnCad) { btnCad.disabled = false; btnCad.innerHTML = 'Criar conta'; }
+        }
+      })
+      .catch(() => {
+        mostrarAlerta('alert-cad', 'danger', 'Erro de conexão. Tente novamente.');
+        if (btnCad) { btnCad.disabled = false; btnCad.innerHTML = 'Criar conta'; }
+      });
+    }
+  }
+
+  /* ════════════════════════════════
+     FAZER LOGIN
+  ════════════════════════════════ */
+  function fazerLogin() {
+    const email = document.getElementById('login-email');
+    const senha = document.getElementById('login-senha');
+    let ok = true;
+
+    if (!/\S+@\S+\.\S+/.test(email.value)) { email.classList.add('is-invalid'); ok=false; } else email.classList.remove('is-invalid');
+    if (senha.value.length < 4)            { senha.classList.add('is-invalid'); ok=false; } else senha.classList.remove('is-invalid');
+
+    if (ok) {
+      const btnLogin = document.querySelector('#form-login .btn-main');
+      btnLogin.disabled = true;
+      btnLogin.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Entrando…';
+
+      fetch('/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: email.value.trim(), senha: senha.value })
+      })
+      .then(r => r.json().then(data => ({ status: r.status, data })))
+      .then(({ status, data }) => {
+        if (status === 200 && (data.token || data.access_token)) {
+          localStorage.setItem('zelo_token', data.token || data.access_token);
+          localStorage.setItem('zelo_user', JSON.stringify(data.user || data.usuario || {}));
+          mostrarAlerta('alert-login', 'success', 'Login realizado! Redirecionando…');
+          setTimeout(() => { window.location.href = 'dashboard.html'; }, 1200);
+        } else {
+          mostrarAlerta('alert-login', 'danger', data.message || data.erro || data.msg || 'E-mail ou senha inválidos.');
+          btnLogin.disabled = false;
+          btnLogin.innerHTML = '<i class="bi bi-box-arrow-in-right me-1"></i>Entrar';
+        }
+      })
+      .catch(() => {
+        mostrarAlerta('alert-login', 'danger', 'Erro de conexão. Tente novamente.');
+        btnLogin.disabled = false;
+        btnLogin.innerHTML = '<i class="bi bi-box-arrow-in-right me-1"></i>Entrar';
+      });
+    }
+  }
+
+  /* ════════════════════════════════
+     RECUPERAR SENHA
+  ════════════════════════════════ */
+  function enviarRecupSenha() {
+    const email = document.getElementById('esq-senha-email');
+    if (!/\S+@\S+\.\S+/.test(email.value)) {
+      email.classList.add('is-invalid'); return;
+    }
+    email.classList.remove('is-invalid');
+    // Simula envio → aqui: POST /auth/forgot-password
+    goTo('screen-email-enviado');
+  }
+
+  /* ════════════════════════════════
+     BUSCAR CONTA (esqueci e-mail)
+  ════════════════════════════════ */
+  function buscarEmail() {
+    const nome = document.getElementById('esq-email-nome');
+    const cpf  = document.getElementById('esq-email-cpf');
+    const nasc = document.getElementById('esq-email-nasc');
+    let ok = true;
+    if (!nome.value.trim()) { nome.classList.add('is-invalid'); ok=false; } else nome.classList.remove('is-invalid');
+    if (cpf.value.length < 14){ cpf.classList.add('is-invalid'); ok=false;  } else cpf.classList.remove('is-invalid');
+    if (!nasc.value)           { nasc.classList.add('is-invalid'); ok=false; } else nasc.classList.remove('is-invalid');
+    if (ok) goTo('screen-conta-encontrada');
+  }
+
+  /* ════════════════════════════════
+     REDEFINIR SENHA
+  ════════════════════════════════ */
+  function redefinirSenha() {
+    const s1 = document.getElementById('nova-senha');
+    const s2 = document.getElementById('nova-senha2');
+    let ok = true;
+    if (calcForca(s1.value) < 3) { s1.classList.add('is-invalid'); ok=false; } else s1.classList.remove('is-invalid');
+    if (s2.value !== s1.value)   { s2.classList.add('is-invalid'); ok=false; } else s2.classList.remove('is-invalid');
+    if (ok) {
+      document.getElementById('sucesso-titulo').textContent = 'Senha redefinida!';
+      document.getElementById('sucesso-sub').textContent    = 'Sua senha foi alterada com sucesso. Agora você pode entrar com a nova senha.';
+      goTo('screen-sucesso');
+    }
+  }
+
+  /* ════════════════════════════════
+     REDEFINIR E-MAIL
+  ════════════════════════════════ */
+  function redefinirEmail() {
+    const e1 = document.getElementById('novo-email');
+    const e2 = document.getElementById('novo-email2');
+    const s  = document.getElementById('redef-email-senha');
+    let ok = true;
+    if (!/\S+@\S+\.\S+/.test(e1.value)) { e1.classList.add('is-invalid'); ok=false; } else e1.classList.remove('is-invalid');
+    if (e2.value !== e1.value)           { e2.classList.add('is-invalid'); ok=false; } else e2.classList.remove('is-invalid');
+    if (s.value.length < 4)             { s.classList.add('is-invalid');  ok=false; } else s.classList.remove('is-invalid');
+    if (ok) {
+      document.getElementById('sucesso-titulo').textContent = 'E-mail alterado!';
+      document.getElementById('sucesso-sub').textContent    = 'Seu e-mail foi atualizado com sucesso. Use-o no próximo login.';
+      goTo('screen-sucesso');
+    }
+  }
+
+  /* ════════════════════════════════
+     REENVIAR E-MAIL
+  ════════════════════════════════ */
+  let reenvioContador = 0;
+  function reenviarEmail() {
+    const btn = document.getElementById('btn-reenviar');
+    btn.style.pointerEvents = 'none';
+    btn.style.color = '#9aaabf';
+    let seg = 60;
+    const timer = setInterval(() => {
+      btn.textContent = `Reenviar em ${seg}s`;
+      seg--;
+      if (seg < 0) {
+        clearInterval(timer);
+        btn.textContent = 'Não recebeu? Reenviar e-mail';
+        btn.style.pointerEvents = 'auto';
+        btn.style.color = '';
+      }
+    }, 1000);
+  }
+
+  /* ════════════════════════════════
+     MÁSCARA CPF
+  ════════════════════════════════ */
+  function mascaraCPF(input) {
+    let v = input.value.replace(/\D/g,'');
+    v = v.replace(/(\d{3})(\d)/,'$1.$2');
+    v = v.replace(/(\d{3})(\d)/,'$1.$2');
+    v = v.replace(/(\d{3})(\d{1,2})$/,'$1-$2');
+    input.value = v;
+  }
+
+  /* ════════════════════════════════
+     HELPERS DE ALERTA
+  ════════════════════════════════ */
+  function mostrarAlerta(containerId, tipo, msg) {
+    const cor = { success:'#d4f0e0', warning:'#fdf0c4', danger:'#fde8e8' };
+    const icon= { success:'bi-check-circle-fill', warning:'bi-exclamation-triangle-fill', danger:'bi-x-circle-fill' };
+    const txt = { success:'#1e9e56', warning:'#a07800', danger:'#dc3545' };
+    document.getElementById(containerId).innerHTML = `
+      <div class="alert-feedback mb-3" style="background:${cor[tipo]};color:${txt[tipo]};">
+        <i class="bi ${icon[tipo]}"></i> ${msg}
+      </div>`;
+  }
+  </script>
+</body>
+</html>
