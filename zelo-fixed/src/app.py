@@ -18,27 +18,19 @@ import hmac, hashlib, base64, json
 # ─────────────────────────────────────────
 app = Flask(__name__, static_folder=".", static_url_path="")
 
-MONGO_URI   = os.environ.get("MONGO_URI", "mongodb://localhost:27017")
+MONGO_URI   = os.environ.get("MONGODB_URI", "mongodb://localhost:27017/zelo")
 SECRET_KEY  = os.environ.get("SECRET_KEY", secrets.token_hex(32))
 TOKEN_HOURS = int(os.environ.get("TOKEN_HOURS", 72))
 
 # ─────────────────────────────────────────
-# BANCO DE DADOS  (padrão conexao_mongo.py)
+# BANCO DE DADOS
 # ─────────────────────────────────────────
 client = MongoClient(MONGO_URI)
+db     = client.get_default_database()
 
-try:
-    client.admin.command("ping")
-    print("✔ Conexão com MongoDB: OK")
-    print("Bancos disponíveis:", client.list_database_names())
-except Exception as e:
-    print("✘ Erro de conexão:", e)
-
-db = client["zelo-tests"]
-
-usuarios_col    = db["usuarios"]
-acervos_col     = db["acervos"]
-obras_col       = db["obras"]
+usuarios_col   = db["usuarios"]
+acervos_col    = db["acervos"]
+obras_col      = db["obras"]
 emprestimos_col = db["emprestimos"]
 
 # Índice único no email
