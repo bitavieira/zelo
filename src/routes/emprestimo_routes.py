@@ -73,7 +73,7 @@ def registrar_emprestimo():
         return jsonify({"error": "Usuário não encontrado ou está inativo."}), 404
         
     # Verifica livro ativo e disponível
-    livro = livros_col.find_one({"_id": livro_id, "ativo": True})
+    livro = livros_col.find_one({"_id": livro_id, "ativo": {"$ne": False}})
     if not livro:
         return jsonify({"error": "Livro não encontrado ou foi removido."}), 404
         

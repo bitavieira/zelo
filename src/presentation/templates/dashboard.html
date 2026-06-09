@@ -1813,6 +1813,16 @@
           if (badgeNav) {
             badgeNav.textContent = loans.length;
           }
+
+          const tabs = document.querySelectorAll(".tab-emp");
+          if (tabs.length > 0) {
+            const activeCount = loans.filter(l => l.status !== 'devolvido' && l.status !== 'atrasado').length;
+            tabs[0].textContent = `Ativos (${activeCount})`;
+          }
+          if (tabs.length > 1) {
+            tabs[1].textContent = `Atrasados (${totalAtrasados})`;
+          }
+
         })
         .catch(console.error);
     }

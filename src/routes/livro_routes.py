@@ -27,7 +27,7 @@ def serialize_livro(livro):
 def listar_livros():
     disponiveis = request.args.get("disponiveis", "false").lower() == "true"
     
-    query = {"ativo": True}
+    query = {"ativo": {"$ne": False}}
     if disponiveis:
         query["exemplares_disponiveis"] = {"$gt": 0}
         
@@ -39,10 +39,10 @@ def listar_livros():
 def buscar_livros():
     q = request.args.get("q", "").strip()
     if not q:
-        livros = list(livros_col.find({"ativo": True}))
+        livros = list(livros_col.find({"ativo": {"$ne": False}}))
     else:
         query = {
-            "ativo": True,
+            "ativo": {"$ne": False},
             "$or": [
                 {"titulo": {"$regex": q, "$options": "i"}},
                 {"autor": {"$regex": q, "$options": "i"}},
