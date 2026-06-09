@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Zelo — Compartilhe sem perder o controle</title>
+
+  <!-- Bootstrap 5 -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <!-- Bootstrap Icons -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet" />
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet" />
+
+  <style>
+    /* ── Variáveis de cor ── */
+    :root {
+      --verde:      #2DBE6C;
+      --verde-esc:  #1e9e56;
+      --azul-esc:   #0d1f40;
+      --azul-med:   #1a3a6b;
+      --cinza-bg:   #f0f3f7;
+      --card-livro: #d4f0e0;
+      --card-emp:   #fdf0c4;
+      --card-com:   #d6e4f7;
+    }
+
+    * { font-family: 'Nunito', sans-serif; }
+
+    body { background-color: var(--cinza-bg); }
+
+    /* ── Navbar ── */
+    .navbar-zelo {
+      background-color: #a8dfc9;   /* verde-água suave do wireframe */
+      padding: 0.75rem 2rem;
+    }
+    .navbar-brand img { height: 42px; }
+    .navbar-brand span {
+      font-size: 1.6rem;
+      font-weight: 900;
+      color: var(--azul-esc);
+      letter-spacing: -1px;
+    }
+    .btn-login {
+      background: #fff;
+      border: 2px solid var(--azul-esc);
+      color: var(--azul-esc);
+      font-weight: 700;
+      border-radius: 50px;
+      padding: 0.4rem 1.6rem;
+      transition: all .2s;
+    }
+    .btn-login:hover {
+      background: var(--azul-esc);
+      color: #fff;
+    }
+
+    /* ── Hero ── */
+    .hero {
+      padding: 4rem 0 3rem;
+    }
+    .hero h1 {
+      font-size: 2.2rem;
+      font-weight: 900;
+      color: var(--azul-esc);
+      line-height: 1.25;
+    }
+    .hero p {
+      color: #5a6a7e;
+      font-size: 1.05rem;
+      font-weight: 600;
+      margin-bottom: 1.8rem;
+    }
+    .btn-criar {
+      background-color: var(--verde);
+      color: #fff;
+      font-weight: 800;
+      border: none;
+      border-radius: 50px;
+      padding: 0.65rem 1.8rem;
+      font-size: 1rem;
+      transition: background .2s;
+    }
+    .btn-criar:hover { background-color: var(--verde-esc); color: #fff; }
+
+    .btn-saiba {
+      background: transparent;
+      border: 2px solid var(--azul-esc);
+      color: var(--azul-esc);
+      font-weight: 700;
+      border-radius: 50px;
+      padding: 0.6rem 1.6rem;
+      font-size: 1rem;
+      transition: all .2s;
+    }
+    .btn-saiba:hover { background: var(--azul-esc); color: #fff; }
+
+    .hero-img {
+      border-radius: 20px;
+      object-fit: cover;
+      width: 100%;
+      max-height: 320px;
+      box-shadow: 0 8px 32px rgba(13,31,64,.15);
+    }
+
+    /* ── Cards de funcionalidades ── */
+    .feature-card {
+      border: none;
+      border-radius: 20px;
+      padding: 2rem 1.5rem;
+      text-align: center;
+      transition: transform .2s, box-shadow .2s;
+    }
+    .feature-card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 12px 28px rgba(13,31,64,.12);
+    }
+    .feature-card .icon-wrap {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 1rem;
+      font-size: 1.7rem;
+    }
+    .feature-card h5 {
+      font-weight: 800;
+      font-size: 1.15rem;
+      color: var(--azul-esc);
+      margin-bottom: .4rem;
+    }
+    .feature-card p {
+      font-size: .9rem;
+      color: #5a6a7e;
+      font-weight: 600;
+      margin: 0;
+    }
+
+    .card-livro { background-color: var(--card-livro); }
+    .card-emp   { background-color: var(--card-emp); }
+    .card-com   { background-color: var(--card-com); }
+
+    .icon-livro { background: rgba(45,190,108,.25); color: var(--verde-esc); }
+    .icon-emp   { background: rgba(255,200,0,.3);   color: #a07800; }
+    .icon-com   { background: rgba(30,90,200,.15);  color: #1a4fbf; }
+
+    /* ── Rodapé simples ── */
+    footer {
+      background: var(--azul-esc);
+      color: rgba(255,255,255,.65);
+      font-size: .85rem;
+      padding: 1.2rem 0;
+      text-align: center;
+    }
+    footer span { color: var(--verde); font-weight: 700; }
+  </style>
+</head>
+<body>
+
+  <!-- ═══════════════════════════════════════
+       NAVBAR
+  ═══════════════════════════════════════ -->
+  <nav class="navbar navbar-zelo d-flex justify-content-between align-items-center">
+    <!-- Logo -->
+    <a class="navbar-brand d-flex align-items-center gap-2 text-decoration-none" href="#">
+      <!-- Ícone SVG inline do Zelo -->
+      <svg width="42" height="42" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <!-- estante -->
+        <rect x="8" y="52" width="64" height="5" rx="2.5" fill="#0d1f40"/>
+        <!-- livros -->
+        <rect x="14" y="28" width="10" height="24" rx="2" fill="#1a4fbf"/>
+        <rect x="26" y="22" width="10" height="30" rx="2" fill="#2DBE6C"/>
+        <rect x="38" y="30" width="8"  height="22" rx="2" fill="#0d1f40"/>
+        <rect x="48" y="26" width="10" height="26" rx="2" fill="#2DBE6C" opacity=".7"/>
+        <!-- plantinha -->
+        <circle cx="64" cy="36" r="7" fill="#2DBE6C" opacity=".85"/>
+        <rect x="62" y="42" width="4" height="10" rx="2" fill="#1e9e56"/>
+        <!-- sorriso / arco -->
+        <path d="M22 64 Q40 74 58 64" stroke="#2DBE6C" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+        <circle cx="22" cy="64" r="3" fill="#2DBE6C"/>
+        <circle cx="58" cy="64" r="3" fill="#2DBE6C"/>
+      </svg>
+      <span>zelo</span>
+    </a>
+
+    <!-- Botão login -->
+    <a href="login.html" class="btn btn-login">
+      <i class="bi bi-person me-1"></i> Login
+    </a>
+  </nav>
+
+  <!-- ═══════════════════════════════════════
+       HERO
+  ═══════════════════════════════════════ -->
+  <section class="hero">
+    <div class="container">
+      <div class="row align-items-center g-4">
+
+        <!-- Texto -->
+        <div class="col-lg-6">
+          <h1>Sua biblioteca pessoal,<br>organizada com <span style="color:var(--verde)">Zelo.</span></h1>
+          <p>Catalogue, Empreste e Compartilhe seus<br>livros favoritos com facilidade.</p>
+          <div class="d-flex gap-3 flex-wrap">
+            <a href="cadastro.html" class="btn btn-criar">
+              <i class="bi bi-plus-circle me-1"></i> Criar Meu Acervo
+            </a>
+            <a href="#funcionalidades" class="btn btn-saiba">Saiba Mais</a>
+          </div>
+        </div>
+
+        <!-- Imagem -->
+        <div class="col-lg-6">
+          <img
+            src="https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=700&q=80"
+            alt="Estante de livros"
+            class="hero-img"
+          />
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════
+       CARDS DE FUNCIONALIDADES
+  ═══════════════════════════════════════ -->
+  <section id="funcionalidades" class="py-4 pb-5">
+    <div class="container">
+      <div class="row g-4">
+
+        <!-- Livros -->
+        <div class="col-md-4">
+          <div class="feature-card card-livro h-100">
+            <div class="icon-wrap icon-livro">
+              <i class="bi bi-book-half"></i>
+            </div>
+            <h5>Livros</h5>
+            <p>Crie sua estante de livros</p>
+          </div>
+        </div>
+
+        <!-- Empréstimos -->
+        <div class="col-md-4">
+          <div class="feature-card card-emp h-100">
+            <div class="icon-wrap icon-emp">
+              <i class="bi bi-clipboard-check"></i>
+            </div>
+            <h5>Empréstimos</h5>
+            <p>Organize seus empréstimos</p>
+          </div>
+        </div>
+
+        <!-- Comunidade -->
+        <div class="col-md-4">
+          <div class="feature-card card-com h-100">
+            <div class="icon-wrap icon-com">
+              <i class="bi bi-people"></i>
+            </div>
+            <h5>Comunidade</h5>
+            <p>Conheça acervos de outras pessoas</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════
+       FOOTER
+  ═══════════════════════════════════════ -->
+  <footer>
+    &copy; 2026 <span>Zelo</span> — Compartilhe sem perder o controle.
+  </footer>
+
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

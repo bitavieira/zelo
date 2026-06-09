@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Zelo — Página não encontrada</title>
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"/>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet"/>
+
+  <style>
+    :root {
+      --verde:     #2DBE6C;
+      --verde-esc: #1e9e56;
+      --azul-esc:  #0d1f40;
+      --azul-med:  #1a3a6b;
+      --cinza-bg:  #f0f3f7;
+      --cinza-in:  #e8ecf2;
+    }
+
+    * { font-family: 'Nunito', sans-serif; box-sizing: border-box; }
+
+    body {
+      background: var(--cinza-bg);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem 1rem;
+      overflow: hidden;
+      position: relative;
+    }
+
+    /* ── Círculos decorativos de fundo ── */
+    .bg-circle {
+      position: fixed;
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 0;
+    }
+    .bg-circle-1 {
+      width: 500px; height: 500px;
+      background: radial-gradient(circle, rgba(45,190,108,.08) 0%, transparent 70%);
+      top: -150px; left: -150px;
+    }
+    .bg-circle-2 {
+      width: 400px; height: 400px;
+      background: radial-gradient(circle, rgba(13,31,64,.06) 0%, transparent 70%);
+      bottom: -100px; right: -100px;
+    }
+    .bg-circle-3 {
+      width: 250px; height: 250px;
+      background: radial-gradient(circle, rgba(45,190,108,.05) 0%, transparent 70%);
+      top: 40%; right: 10%;
+    }
+
+    /* ── Container central ── */
+    .error-wrap {
+      position: relative; z-index: 1;
+      display: flex; flex-direction: column; align-items: center;
+      text-align: center; max-width: 540px; width: 100%;
+      animation: fadeUp .5s ease;
+    }
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── Logo ── */
+    .logo-top {
+      display: flex; align-items: center; gap: .6rem;
+      text-decoration: none; margin-bottom: 2.5rem;
+    }
+    .logo-top span {
+      font-size: 1.6rem; font-weight: 900;
+      color: var(--azul-esc); letter-spacing: -1px;
+    }
+
+    /* ── Ilustração 404 ── */
+    .illustration {
+      position: relative;
+      width: 280px; height: 200px;
+      margin-bottom: 2rem;
+    }
+
+    /* Estante */
+    .shelf {
+      position: absolute;
+      bottom: 0; left: 50%;
+      transform: translateX(-50%);
+      width: 260px; height: 8px;
+      background: var(--azul-esc);
+      border-radius: 4px;
+    }
+    .shelf::before {
+      content: '';
+      position: absolute;
+      bottom: -18px; left: 10%;
+      width: 80%; height: 18px;
+      background: rgba(13,31,64,.12);
+      border-radius: 0 0 8px 8px;
+    }
+
+    /* Livros na estante */
+    .book {
+      position: absolute;
+      bottom: 8px;
+      border-radius: 3px 6px 6px 3px;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .book-1 { left: 20px; width: 28px; height: 90px; background: var(--azul-med); }
+    .book-2 { left: 52px; width: 22px; height: 110px; background: var(--verde); }
+    .book-3 { left: 78px; width: 30px; height: 80px; background: #e8ecf2; border: 2px solid #c0ccd8; }
+    .book-4 { left: 112px; width: 24px; height: 100px; background: var(--azul-esc); }
+    .book-5 { left: 140px; width: 28px; height: 75px; background: #ffb703; }
+    .book-6 { left: 172px; width: 22px; height: 95px; background: var(--verde); opacity: .6; }
+    .book-7 { left: 198px; width: 32px; height: 85px; background: #e63946; }
+
+    /* Livro flutuando (o que saiu do lugar) */
+    .book-floating {
+      position: absolute;
+      width: 36px; height: 48px;
+      background: var(--azul-esc);
+      border-radius: 4px 8px 8px 4px;
+      top: 10px; left: 50%;
+      transform: translateX(-50%) rotate(-15deg);
+      box-shadow: 0 8px 20px rgba(13,31,64,.2);
+      animation: float 3s ease-in-out infinite;
+    }
+    .book-floating::after {
+      content: '?';
+      position: absolute;
+      inset: 0;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.3rem; font-weight: 900; color: var(--verde);
+    }
+    @keyframes float {
+      0%, 100% { transform: translateX(-50%) rotate(-15deg) translateY(0); }
+      50%       { transform: translateX(-50%) rotate(-12deg) translateY(-10px); }
+    }
+
+    /* ── Número 404 ── */
+    .num-404 {
+      font-size: 7rem;
+      font-weight: 900;
+      line-height: 1;
+      color: var(--azul-esc);
+      letter-spacing: -4px;
+      margin-bottom: .4rem;
+      position: relative;
+    }
+    .num-404 .zero-mid {
+      display: inline-block;
+      color: var(--verde);
+      position: relative;
+    }
+    .num-404 .zero-mid::after {
+      content: '';
+      position: absolute;
+      bottom: 8px; left: 50%;
+      transform: translateX(-50%);
+      width: 60%; height: 6px;
+      background: var(--verde);
+      border-radius: 3px;
+      opacity: .25;
+    }
+
+    /* ── Texto ── */
+    .error-title {
+      font-size: 1.4rem; font-weight: 900;
+      color: var(--azul-esc); margin-bottom: .6rem;
+    }
+    .error-sub {
+      font-size: .95rem; font-weight: 600;
+      color: #6b7a90; margin-bottom: 2rem;
+      line-height: 1.6;
+    }
+
+    /* ── Botões ── */
+    .btn-main {
+      background: var(--verde); color: #fff;
+      font-weight: 800; font-size: .95rem;
+      border: none; border-radius: 50px;
+      padding: .75rem 2rem; cursor: pointer;
+      transition: background .2s, transform .1s;
+      display: inline-flex; align-items: center; gap: .5rem;
+      text-decoration: none;
+    }
+    .btn-main:hover  { background: var(--verde-esc); color: #fff; }
+    .btn-main:active { transform: scale(.98); }
+
+    .btn-outline {
+      background: transparent; color: var(--azul-esc);
+      font-weight: 800; font-size: .92rem;
+      border: 2px solid var(--cinza-in); border-radius: 50px;
+      padding: .7rem 1.8rem; cursor: pointer;
+      transition: all .2s; display: inline-flex; align-items: center; gap: .4rem;
+      text-decoration: none;
+    }
+    .btn-outline:hover { border-color: var(--azul-esc); color: var(--azul-esc); }
+
+    /* ── Links de sugestão ── */
+    .suggestions {
+      margin-top: 2.5rem;
+      background: #fff;
+      border-radius: 20px;
+      padding: 1.4rem 1.6rem;
+      box-shadow: 0 2px 16px rgba(13,31,64,.07);
+      width: 100%;
+      text-align: left;
+    }
+    .suggestions p {
+      font-size: .78rem; font-weight: 800;
+      color: #9aaabf; text-transform: uppercase;
+      letter-spacing: .9px; margin-bottom: .8rem;
+    }
+    .sugg-item {
+      display: flex; align-items: center; gap: .8rem;
+      padding: .65rem .8rem; border-radius: 12px;
+      text-decoration: none; transition: background .15s;
+      color: var(--azul-esc);
+    }
+    .sugg-item:hover { background: var(--cinza-bg); color: var(--azul-esc); }
+    .sugg-icon {
+      width: 36px; height: 36px; border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1rem; flex-shrink: 0;
+    }
+    .sugg-item span { font-size: .88rem; font-weight: 700; }
+    .sugg-item small { display: block; font-size: .75rem; font-weight: 600; color: #9aaabf; }
+
+    /* ── Rodapé ── */
+    footer {
+      position: fixed; bottom: 0; left: 0; right: 0;
+      background: var(--azul-esc);
+      color: rgba(255,255,255,.5);
+      font-size: .8rem; padding: .8rem 0; text-align: center;
+      z-index: 1;
+    }
+    footer span { color: var(--verde); font-weight: 700; }
+
+    @media (max-width: 480px) {
+      .num-404 { font-size: 5rem; }
+      .illustration { width: 220px; height: 160px; transform: scale(.85); }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Fundo decorativo -->
+  <div class="bg-circle bg-circle-1"></div>
+  <div class="bg-circle bg-circle-2"></div>
+  <div class="bg-circle bg-circle-3"></div>
+
+  <div class="error-wrap">
+
+    <!-- Logo -->
+    <a class="logo-top" href="index.html">
+      <svg width="36" height="36" viewBox="0 0 80 80" fill="none">
+        <rect x="8" y="52" width="64" height="5" rx="2.5" fill="#0d1f40"/>
+        <rect x="14" y="28" width="10" height="24" rx="2" fill="#1a4fbf"/>
+        <rect x="26" y="22" width="10" height="30" rx="2" fill="#2DBE6C"/>
+        <rect x="38" y="30" width="8"  height="22" rx="2" fill="#0d1f40"/>
+        <rect x="48" y="26" width="10" height="26" rx="2" fill="#2DBE6C" opacity=".7"/>
+        <path d="M22 64 Q40 74 58 64" stroke="#2DBE6C" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+        <circle cx="22" cy="64" r="3" fill="#2DBE6C"/>
+        <circle cx="58" cy="64" r="3" fill="#2DBE6C"/>
+      </svg>
+      <span>zelo</span>
+    </a>
+
+    <!-- Ilustração da estante -->
+    <div class="illustration">
+      <div class="book-floating"></div>
+      <div class="book book-1"></div>
+      <div class="book book-2"></div>
+      <div class="book book-3"></div>
+      <div class="book book-4"></div>
+      <div class="book book-5"></div>
+      <div class="book book-6"></div>
+      <div class="book book-7"></div>
+      <div class="shelf"></div>
+    </div>
+
+    <!-- Número -->
+    <div class="num-404">
+      4<span class="zero-mid">0</span>4
+    </div>
+
+    <!-- Texto -->
+    <h1 class="error-title">Página não encontrada</h1>
+    <p class="error-sub">
+      Parece que este livro saiu da estante e ninguém sabe onde foi parar.<br>
+      A página que você procura não existe ou foi movida.
+    </p>
+
+    <!-- Botões -->
+    <div class="d-flex gap-3 flex-wrap justify-content-center">
+      <a href="index.html" class="btn-main">
+        <i class="bi bi-house-fill"></i> Ir para o início
+      </a>
+      <button class="btn-outline" onclick="history.back()">
+        <i class="bi bi-arrow-left"></i> Voltar
+      </button>
+    </div>
+
+    <!-- Sugestões de navegação -->
+    <div class="suggestions">
+      <p><i class="bi bi-compass me-1"></i> Talvez você esteja procurando</p>
+
+      <a href="dashboard.html" class="sugg-item">
+        <div class="sugg-icon" style="background:#e8f8ef;color:var(--verde-esc);">
+          <i class="bi bi-speedometer2"></i>
+        </div>
+        <div>
+          <span>Dashboard</span>
+          <small>Visão geral do seu acervo</small>
+        </div>
+        <i class="bi bi-chevron-right ms-auto" style="color:#c0ccd8;font-size:.8rem;"></i>
+      </a>
+
+      <a href="dashboard.html" class="sugg-item">
+        <div class="sugg-icon" style="background:#fff3cd;color:#a07800;">
+          <i class="bi bi-arrow-left-right"></i>
+        </div>
+        <div>
+          <span>Empréstimos</span>
+          <small>Controle quem tem o quê</small>
+        </div>
+        <i class="bi bi-chevron-right ms-auto" style="color:#c0ccd8;font-size:.8rem;"></i>
+      </a>
+
+      <a href="criar-acervo.html" class="sugg-item">
+        <div class="sugg-icon" style="background:#eef2fb;color:var(--azul-med);">
+          <i class="bi bi-collection"></i>
+        </div>
+        <div>
+          <span>Criar acervo</span>
+          <small>Organize sua coleção de livros</small>
+        </div>
+        <i class="bi bi-chevron-right ms-auto" style="color:#c0ccd8;font-size:.8rem;"></i>
+      </a>
+
+      <a href="login.html" class="sugg-item">
+        <div class="sugg-icon" style="background:var(--cinza-in);color:var(--azul-esc);">
+          <i class="bi bi-box-arrow-in-right"></i>
+        </div>
+        <div>
+          <span>Entrar na conta</span>
+          <small>Login ou criar conta</small>
+        </div>
+        <i class="bi bi-chevron-right ms-auto" style="color:#c0ccd8;font-size:.8rem;"></i>
+      </a>
+    </div>
+
+  </div>
+
+  <footer>
+    &copy; 2026 <span>Zelo</span> — Compartilhe sem perder o controle.
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
